@@ -1,0 +1,2069 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本代表スタメン選考アプリ - 接続テスト</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink-deep: #13283e;       /* 深紺：ベース背景（やや明るめに調整） */
+    --ink-panel: #1a3450;      /* パネル背景 */
+    --ink-panel-raised: #234468; /* 一段明るいパネル */
+    --gold: #c9a85c;           /* 金：承認・確定・格式 */
+    --gold-bright: #e0c483;
+    --crimson: #b8253f;        /* 日章旗の赤：警告・差し戻し */
+    --crimson-deep: #7a1828;
+    --paper: #f3ede0;          /* オフホワイト：本文 */
+    --paper-dim: #a9b8d4;      /* やや沈んだサブテキスト */
+    --line: rgba(201, 168, 92, 0.28); /* 金の罫線 */
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+    background:
+      radial-gradient(ellipse 900px 600px at 50% -10%, rgba(201,168,92,0.10), transparent 60%),
+      linear-gradient(180deg, var(--ink-deep) 0%, #0f2236 100%);
+    color: var(--paper);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 48px 16px;
+    position: relative;
+    overflow-x: hidden;
+  }
+  /* 背景の八咫烏（signature element）：中央奥に大きく、極めて薄く */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 1100px;
+    height: 1100px;
+    transform: translate(-50%, -50%);
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><g fill="%23c9a85c" opacity="1"><path d="M100 18c-3 6-2 13 2 18-9 1-17 6-22 14-7-3-15-2-21 3-5 4-7 11-5 17-7 2-12 8-13 15-1 8 3 15 10 19-4 6-4 14 0 20 4 6 11 9 18 8-1 7 2 14 8 18 6 4 14 4 20 0 4 6 11 9 18 8 7-1 13-6 15-13 7 3 15 1 20-4 5-5 7-12 5-19 7-3 11-10 11-18 0-7-4-14-10-18 3-6 2-14-2-19-4-6-11-8-18-7 0-7-4-13-10-17-6-4-14-4-20 0-2-7-8-13-16-14 3-5 4-12 1-18-2-5-6-8-11-9z M70 75c-2 4-1 9 2 12-3 4-3 9 0 13-3 3-4 8-2 12 1 3 4 6 7 7-2 4-1 9 2 12 3 3 8 4 12 2 1 4 5 7 9 8 4 1 9-1 11-4 4 2 9 1 12-2 3-3 4-8 2-12 4-1 7-4 8-8 1-4-1-9-4-11 2-4 1-9-2-12-3-3-8-4-12-2-1-4-5-7-9-8-4-1-9 1-11 4-4-2-9-1-12 2-3 3-4 8-2 12z"/></g></svg>');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.035;
+    pointer-events: none;
+    z-index: 0;
+  }
+  /* 日章旗：右上に小さく、控えめに */
+  body::after {
+    content: "";
+    position: fixed;
+    top: 28px;
+    right: 36px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--crimson);
+    box-shadow: 0 0 0 1px var(--line), 0 4px 14px rgba(184,37,63,0.35);
+    opacity: 0.85;
+    z-index: 0;
+  }
+  .card {
+    background:
+      linear-gradient(180deg, var(--ink-panel-raised) 0%, var(--ink-panel) 100%);
+    padding: 44px 40px;
+    border-radius: 4px;
+    text-align: center;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.04) inset,
+      0 24px 60px rgba(0,0,0,0.55);
+    border: 1px solid var(--line);
+    max-width: 480px;
+    width: 100%;
+    transition: max-width 0.25s ease;
+    position: relative;
+    z-index: 1;
+  }
+  /* 四隅の金の罫アクセント（公式書類のような印象） */
+  .card::before, .card::after {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--gold);
+    opacity: 0.55;
+  }
+  .card::before {
+    top: -1px; left: -1px;
+    border-right: none; border-bottom: none;
+  }
+  .card::after {
+    bottom: -1px; right: -1px;
+    border-left: none; border-top: none;
+  }
+  .card.wide {
+    max-width: 920px;
+  }
+  .card.medium {
+    max-width: 620px;
+  }
+  h1 {
+    font-family: "Shippori Mincho", serif;
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: 0.06em;
+    margin: 0 0 8px;
+    color: var(--paper);
+  }
+  h1::after {
+    content: "";
+    display: block;
+    width: 56px;
+    height: 2px;
+    background: var(--gold);
+    margin: 16px auto 24px;
+  }
+  #status {
+    font-size: 18px;
+    padding: 16px;
+    border-radius: 4px;
+    margin-top: 16px;
+  }
+  .ok {
+    background: rgba(58, 122, 84, 0.18);
+    color: #a8e0bc;
+    border: 1px solid rgba(58,122,84,0.4);
+  }
+  .ng {
+    background: rgba(184, 37, 63, 0.16);
+    color: #f0b4bf;
+    border: 1px solid rgba(184,37,63,0.4);
+  }
+  .loading {
+    background: rgba(201, 168, 92, 0.12);
+    color: var(--gold-bright);
+    border: 1px solid rgba(201,168,92,0.3);
+  }
+  #connectionStatus {
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 24px;
+  }
+  .screen {
+    display: none;
+  }
+  .screen.active {
+    display: block;
+  }
+  .role-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .role-btn {
+    flex: 1;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--line);
+    color: var(--paper);
+    padding: 26px 16px;
+    border-radius: 4px;
+    font-family: "Shippori Mincho", serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  }
+  .role-btn:hover {
+    background: rgba(201,168,92,0.08);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+  .role-btn .icon {
+    font-size: 30px;
+    display: block;
+    margin-bottom: 10px;
+    filter: grayscale(0.2);
+  }
+  .back-link {
+    display: inline-block;
+    margin-top: 24px;
+    color: var(--paper-dim);
+    cursor: pointer;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .back-link:hover {
+    color: var(--gold-bright);
+  }
+
+  /* ===== コーチ画面：左右分割レイアウト ===== */
+  .coach-layout {
+    display: flex;
+    gap: 24px;
+    text-align: left;
+    align-items: flex-start;
+  }
+  .coach-left {
+    flex: 1;
+    min-width: 280px;
+  }
+  .coach-right {
+    flex: 1;
+    min-width: 280px;
+  }
+  .panel-title {
+    font-family: "Shippori Mincho", serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--gold-bright);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* 11枠（フォーメーション枠） */
+  .position-group {
+    margin-bottom: 14px;
+  }
+  .position-group-label {
+    font-size: 11px;
+    color: #8a99b8;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+  .position-slot {
+    background: #16263f;
+    border: 1.5px dashed rgba(201,168,92,0.3);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 20px;
+  }
+  .position-slot.filled {
+    border-style: solid;
+    border-color: #3a7a54;
+    background: rgba(58,122,84,0.14);
+  }
+  .position-slot .slot-label {
+    color: #a9b8d4;
+    font-size: 12px;
+    min-width: 70px;
+  }
+  .position-slot .slot-player {
+    flex: 1;
+    text-align: right;
+    font-weight: bold;
+  }
+  .position-slot .slot-empty {
+    flex: 1;
+    text-align: right;
+    color: #6f7d92;
+    font-size: 13px;
+  }
+  .clear-btn {
+    background: none;
+    border: none;
+    color: #d4889a;
+    cursor: pointer;
+    font-size: 13px;
+    margin-left: 8px;
+    padding: 0;
+  }
+
+  /* 26人の選手リスト */
+  .player-list {
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .player-card {
+    background: #16263f;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  .player-card.used {
+    opacity: 0.35;
+  }
+  .player-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .player-name {
+    font-weight: bold;
+    font-size: 14px;
+  }
+  .player-club {
+    font-size: 11px;
+    color: #a9b8d4;
+  }
+  .flag-icon {
+    height: 11px;
+    vertical-align: middle;
+    border-radius: 2px;
+    margin-left: 2px;
+  }
+  .player-pos-tag {
+    display: inline-block;
+    background: #c9a85c;
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+  .assign-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .assign-btn {
+    background: #1c2f4f;
+    border: 1px solid #c9a85c;
+    color: #e8dfc8;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .assign-btn:hover {
+    background: #c9a85c;
+  }
+  .submit-btn {
+    background: linear-gradient(180deg, #3f8a5c 0%, #336e4a 100%);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #fff;
+    font-family: "Shippori Mincho", serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 14px;
+    border-radius: 4px;
+    width: 100%;
+    margin-top: 16px;
+    cursor: pointer;
+    transition: filter 0.15s;
+  }
+  .submit-btn:hover {
+    filter: brightness(1.12);
+  }
+  .submit-btn:disabled {
+    background: #2a3548;
+    color: #6f7d92;
+    border-color: transparent;
+    cursor: not-allowed;
+    filter: none;
+  }
+  .progress-note {
+    font-size: 13px;
+    color: #a9b8d4;
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  /* ===== 監督画面 ===== */
+  .manager-list {
+    text-align: left;
+  }
+  .manager-slot-row {
+    display: flex;
+    justify-content: space-between;
+    background: #16263f;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  .manager-slot-row .slot-label {
+    color: #a9b8d4;
+    min-width: 90px;
+  }
+  .status-badge {
+    display: inline-block;
+    padding: 7px 18px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 18px;
+    border: 1px solid;
+  }
+  .status-waiting {
+    background: rgba(201,168,92,0.10);
+    color: #e0c483;
+    border-color: rgba(201,168,92,0.45);
+  }
+  .status-none {
+    background: #1c2638;
+    color: #8a96ad;
+    border-color: rgba(255,255,255,0.08);
+  }
+  .manager-slot-row.changed {
+    border: 1.5px solid #c9a85c;
+  }
+  .manager-slot-row .right-side {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* ===== 申請一覧専用の行（白・クリーム背景、濃紺の文字） ===== */
+  .list-entry-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f3ede0;
+    color: #1a3450;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    border-left: 4px solid #c9a85c;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .list-entry-row:hover {
+    background: #fffbf0;
+    transform: translateX(2px);
+  }
+  .list-entry-row .entry-no {
+    color: #7a6a3a;
+    font-weight: 700;
+    min-width: 130px;
+    font-family: "Courier New", monospace;
+  }
+  .list-entry-row .entry-title {
+    flex: 1;
+    text-align: right;
+    color: #1a3450;
+  }
+  .change-btn {
+    background: none;
+    border: 1px solid #c9a85c;
+    color: #a9b8d4;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .change-btn:hover {
+    background: #c9a85c;
+    color: #fff;
+  }
+  .change-panel {
+    margin-top: 8px;
+    padding: 10px;
+    background: #0f2038;
+    border-radius: 8px;
+  }
+  .change-panel-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .change-pick-btn {
+    background: #1c2f4f;
+    border: 1px solid #c9a85c;
+    color: #e8dfc8;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .change-pick-btn:hover {
+    background: #c9a85c;
+  }
+  .memo-box {
+    width: 100%;
+    box-sizing: border-box;
+    background: #0f2038;
+    border: 1px solid #c9a85c;
+    color: #fff;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+  }
+  .manager-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .action-btn {
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #fff;
+    font-family: "Shippori Mincho", serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    padding: 13px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: filter 0.15s;
+  }
+  .action-approve {
+    background: linear-gradient(180deg, #3f8a5c 0%, #336e4a 100%);
+  }
+  .action-decide {
+    background: linear-gradient(180deg, var(--gold) 0%, #a8854a 100%);
+    color: #1a1206;
+  }
+  .action-reject {
+    background: linear-gradient(180deg, #9c3247 0%, var(--crimson-deep) 100%);
+  }
+  .action-btn:hover:not(:disabled) {
+    filter: brightness(1.12);
+  }
+  .action-btn:disabled {
+    background: #2a3548;
+    color: #6f7d92;
+    border-color: transparent;
+    cursor: not-allowed;
+  }
+
+  /* ===== コーチ画面：ステータス表示エリア ===== */
+  .coach-status-box {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  .coach-status-box.waiting {
+    background: rgba(201,168,92,0.14);
+  }
+  .coach-status-box.rejected {
+    background: rgba(184,37,63,0.16);
+  }
+  .coach-status-box.confirmed {
+    background: rgba(58,122,84,0.18);
+  }
+  .coach-status-box.none {
+    background: #1a2a44;
+  }
+  .coach-status-box .status-title {
+    font-weight: bold;
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  .coach-status-box .status-memo {
+    font-size: 13px;
+    color: #e0c483;
+    margin-top: 6px;
+  }
+
+  /* ===========================================
+     スマホ対応（画面幅 768px 以下のとき適用）
+     =========================================== */
+  @media (max-width: 768px) {
+    body {
+      padding: 16px 10px;
+    }
+    .card {
+      padding: 20px 16px;
+    }
+
+    /* 装飾を控えめにする：背景の八咫烏・日章旗を薄く・小さくする */
+    body::before {
+      width: 600px;
+      height: 600px;
+      opacity: 0.02;
+    }
+    body::after {
+      width: 70px;
+    }
+
+    /* コーチ画面：左右分割をやめ、上下に縦並びにする */
+    .coach-layout {
+      flex-direction: column;
+      gap: 16px;
+    }
+    .coach-left, .coach-right {
+      min-width: 0; /* 縦並びになるので、横幅の最小値指定は不要にする */
+      width: 100%;
+    }
+
+    /* ボタン・タップ領域を指で押しやすい大きさにする */
+    .role-btn {
+      padding: 18px 12px;
+      font-size: 15px;
+    }
+    .submit-btn, .action-btn {
+      padding: 14px;
+      font-size: 15px;
+    }
+    .change-btn {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    /* PC版の「11個の割り当てボタン」は隠し、スマホ専用の「タップで選ぶ」ボタンに差し替える */
+    .assign-buttons {
+      display: none;
+    }
+    .mobile-assign-btn {
+      display: block;
+      width: 100%;
+      background: var(--gold);
+      color: #1a2a44;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    /* 文字サイズ全体を少し読みやすく調整 */
+    h1 {
+      font-size: 19px;
+    }
+    .player-name {
+      font-size: 15px;
+    }
+  }
+
+  /* PC幅では、スマホ専用ボタンは表示しない */
+  .mobile-assign-btn {
+    display: none;
+  }
+
+  /* ===== モバイル用：枠選択ポップアップ ===== */
+  .mobile-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .mobile-modal-overlay.active {
+    display: flex;
+  }
+  .mobile-modal-sheet {
+    background: var(--ink-panel);
+    border-top: 2px solid var(--gold);
+    border-radius: 16px 16px 0 0;
+    width: 100%;
+    max-width: 480px;
+    max-height: 75vh;
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  .mobile-modal-title {
+    font-family: "Shippori Mincho", serif;
+    color: var(--gold-bright);
+    font-size: 16px;
+    margin-bottom: 14px;
+    text-align: left;
+  }
+  .mobile-modal-option {
+    display: block;
+    width: 100%;
+    background: #16294f;
+    color: #fff;
+    border: 1px solid var(--line);
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    text-align: left;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  .mobile-modal-option:active {
+    background: var(--gold);
+    color: #1a2a44;
+  }
+  .mobile-modal-cancel {
+    display: block;
+    width: 100%;
+    background: none;
+    color: #a9b8d4;
+    border: 1px solid #3a5a8f;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 8px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="mainCard">
+  <h1>⚽ 日本代表スタメン選考アプリ</h1>
+  <div id="connectionStatus" class="loading">Firebase接続を確認中です…</div>
+
+  <!-- 画面0: 名前入力 -->
+  <div id="screen-name" class="screen">
+    <p>はじめに、あなたの名前（ニックネーム）を教えてください。</p>
+    <p style="font-size:12px; color:#a9b8d4;">この名前は、申請の記録や「自分の申請を自分で承認できないようにする」ために使われます。</p>
+    <input type="text" id="nameInput" class="memo-box" style="text-align:left; min-height:auto;" placeholder="例：たろう">
+    <button class="submit-btn" onclick="saveUserName()">この名前で始める</button>
+  </div>
+
+  <!-- 画面1: 役割選択 -->
+  <div id="screen-select" class="screen">
+    <p style="font-size:13px; color:#a9b8d4;">
+      ようこそ、<span id="currentUserNameLabel"></span> さん
+      <span class="back-link" style="margin:0 0 0 8px; font-size:12px;" onclick="changeUserName()">（名前を変更）</span>
+    </p>
+    <p>あなたの役割を選んでください</p>
+    <div class="role-buttons">
+      <button class="role-btn" onclick="selectRole('coach')">
+        <span class="icon">📋</span>
+        コーチ<br><small>（推薦する）</small>
+      </button>
+      <button class="role-btn" onclick="selectRole('manager')">
+        <span class="icon">🎯</span>
+        監督<br><small>（決定する）</small>
+      </button>
+    </div>
+    <p style="margin-top:28px;">
+      <span class="back-link" style="font-size:12px; color:#a05a6a;" onclick="resetAllData()">🔧 開発用：申請データを全てリセットする</span>
+    </p>
+  </div>
+
+  <!-- 画面2-0: コーチ用ハブ画面（新規申請／3区分リスト） -->
+  <div id="screen-coach-hub" class="screen">
+    <p class="panel-title" style="border:none;">📋 コーチメニュー</p>
+    <div class="role-buttons">
+      <button class="role-btn" onclick="openNewSelectionForm()">
+        <span class="icon">🆕</span>
+        新規申請を始める
+      </button>
+    </div>
+
+    <p style="font-size:14px; color:#a9b8d4; margin-top:24px;">⏳ 申請中リスト</p>
+    <div id="coachSubmittedListArea"></div>
+
+    <p style="font-size:14px; color:#a9b8d4; margin-top:24px;">↩️ 差戻を受けた申請リスト</p>
+    <div id="coachRejectedListArea"></div>
+
+    <p style="font-size:14px; color:#a9b8d4; margin-top:24px;">🏆 承認済リスト（スタメン決定！）</p>
+    <div id="coachApprovedListArea"></div>
+
+    <span class="back-link" onclick="backToSelect()">← 役割選択にもどる</span>
+  </div>
+
+  <!-- 画面2-1: 新規申請タイトル入力 -->
+  <div id="screen-new-selection" class="screen">
+    <p class="panel-title" style="border:none;">🆕 新しい申請を始める</p>
+    <p style="font-size:13px; color:#a9b8d4;">申請No：<span id="newSelectionNoLabel">-</span>（自動採番）</p>
+    <p>この申請のタイトルを入力してください（例：vsオランダ）</p>
+    <input type="text" id="newSelectionTitleInput" class="memo-box" style="text-align:left; min-height:auto;" placeholder="例：vsオランダ">
+    <button class="submit-btn" onclick="confirmNewSelectionTitle()">この内容で選手選びへ進む</button>
+    <span class="back-link" onclick="showScreen('screen-coach-hub')">← もどる</span>
+  </div>
+
+  <!-- 画面2-2: 申請の詳細表示（コーチ視点。差し戻し中なら再申請ボタンを出す） -->
+  <div id="screen-coach-detail" class="screen">
+    <p class="panel-title" style="border:none;">📄 申請の詳細</p>
+    <div id="coachDetailArea"></div>
+    <span class="back-link" onclick="showScreen('screen-coach-hub'); loadCoachHub();">← コーチメニューにもどる</span>
+  </div>
+
+  <!-- 画面X: 申請履歴タイムライン（コーチ・監督共通。証跡の見える化） -->
+  <div id="screen-history-timeline" class="screen">
+    <p class="panel-title" style="border:none;">📜 申請履歴（証跡）</p>
+    <div id="historyTimelineArea"></div>
+    <span class="back-link" id="historyBackLink" onclick="showScreen('screen-coach-detail')">← もどる</span>
+  </div>
+
+  <!-- 画面3: コーチ画面（選手選び） -->
+  <div id="screen-coach" class="screen">
+    <div id="coachStatusArea"></div>
+    <p style="font-size:13px; color:#a9b8d4; text-align:left;">📌 申請No <span id="coachSelectionNoLabel"></span>：<span id="coachSelectionTitleLabel"></span></p>
+    <div class="coach-layout">
+      <div class="coach-left">
+        <div class="panel-title">📐 フォーメーション（3-6-1）</div>
+        <div id="formationSlots"></div>
+        <div class="progress-note" id="progressNote">0 / 11 人 選出済み</div>
+        <p style="font-size:13px; color:#a9b8d4; text-align:left; margin-top:16px; margin-bottom:6px;">📝 この構成の狙い（監督に伝わります・任意）</p>
+        <textarea id="coachCommentInput" class="memo-box" placeholder="例：守備を安定させるため、ボランチを1枚増やす意図です"></textarea>
+        <button class="submit-btn" id="submitBtn" onclick="submitApplication()" disabled>この11人で申請する</button>
+      </div>
+      <div class="coach-right">
+        <div class="panel-title">👥 日本代表26人</div>
+        <div class="player-list" id="playerList"></div>
+      </div>
+    </div>
+    <span class="back-link" onclick="showScreen('screen-coach-hub')">← コーチメニューにもどる</span>
+  </div>
+
+  <!-- 画面4-0: 監督用ハブ画面（未承認一覧／承認済み一覧） -->
+  <div id="screen-manager-hub" class="screen">
+    <p class="panel-title" style="border:none;">🎯 監督メニュー</p>
+    <p style="font-size:14px; color:#a9b8d4; margin-top:16px;">⏳ 未承認の申請一覧</p>
+    <div id="managerPendingListArea"></div>
+    <p style="font-size:14px; color:#a9b8d4; margin-top:24px;">📜 承認済みの申請</p>
+    <div id="managerDoneListArea"></div>
+    <span class="back-link" onclick="backToSelect()">← 役割選択にもどる</span>
+  </div>
+
+  <!-- 画面4-1: 監督の判断・確認画面（個別の申請No） -->
+  <div id="screen-manager" class="screen">
+    <p style="font-size:13px; color:#a9b8d4; text-align:left;">📌 申請No <span id="managerSelectionNoLabel"></span>：<span id="managerSelectionTitleLabel"></span></p>
+    <div id="managerContent">
+      <p>📡 申請状況を確認中です…</p>
+    </div>
+    <span class="back-link" onclick="showScreen('screen-manager-hub'); loadManagerHub();">← 監督メニューにもどる</span>
+  </div>
+</div>
+
+<!-- スマホ用：選手を「どの枠に入れるか」選ぶポップアップ（ボトムシート） -->
+<div id="mobileAssignModal" class="mobile-modal-overlay" onclick="closeMobileAssignModal(event)">
+  <div class="mobile-modal-sheet" onclick="event.stopPropagation()">
+    <p class="mobile-modal-title" id="mobileModalPlayerName"></p>
+    <div id="mobileModalOptions"></div>
+    <button class="mobile-modal-cancel" onclick="closeMobileAssignModal()">キャンセル</button>
+  </div>
+</div>
+
+<!-- Firebaseの機能を読み込む（totoアプリと同じ方式） -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+  // ここに、後でMac812さんのfirebaseConfigを入れます
+  const firebaseConfig = {
+    apiKey: "AIzaSyBrngHQ9Cmw8S-5846vGegi0eTRMakLi9U",
+    authDomain: "samurai-blue-11app.firebaseapp.com",
+    databaseURL: "https://samurai-blue-11app-default-rtdb.firebaseio.com",
+    projectId: "samurai-blue-11app",
+    storageBucket: "samurai-blue-11app.firebasestorage.app",
+    messagingSenderId: "235750643316",
+    appId: "1:235750643316:web:5093fd9ea70fe12eb92321"
+  };
+
+  const statusEl = document.getElementById('connectionStatus');
+  let db = null;
+
+  // ===== 日本代表26人の選手データ（2026年6月時点・JFA公式） =====
+  const players = [
+    { id: 'p01', name: '早川 友基', club: '鹿島アントラーズ', flag: 'jp', pos: 'GK' },
+    { id: 'p02', name: '大迫 敬介', club: 'サンフレッチェ広島', flag: 'jp', pos: 'GK' },
+    { id: 'p03', name: '鈴木 彩艶', club: 'パルマ・カルチョ', flag: 'it', pos: 'GK' },
+    { id: 'p04', name: '長友 佑都', club: 'FC東京', flag: 'jp', pos: 'DF' },
+    { id: 'p05', name: '谷口 彰悟', club: 'シントトロイデンVV', flag: 'be', pos: 'DF' },
+    { id: 'p06', name: '板倉 滉', club: 'アヤックス', flag: 'nl', pos: 'DF' },
+    { id: 'p07', name: '渡辺 剛', club: 'フェイエノールト', flag: 'nl', pos: 'DF' },
+    { id: 'p08', name: '冨安 健洋', club: 'アヤックス', flag: 'nl', pos: 'DF' },
+    { id: 'p09', name: '伊藤 洋輝', club: 'バイエルン・ミュンヘン', flag: 'de', pos: 'DF' },
+    { id: 'p10', name: '瀬古 歩夢', club: 'ル・アーヴルAC', flag: 'fr', pos: 'DF' },
+    { id: 'p11', name: '菅原 由勢', club: 'ヴェルダー・ブレーメン', flag: 'de', pos: 'DF' },
+    { id: 'p12', name: '鈴木 淳之介', club: 'FCコペンハーゲン', flag: 'dk', pos: 'DF' },
+    { id: 'p13', name: '伊東 純也', club: 'KRCゲンク', flag: 'be', pos: 'MF/FW' },
+    { id: 'p14', name: '鎌田 大地', club: 'クリスタル・パレス', flag: 'gb-eng', pos: 'MF/FW' },
+    { id: 'p15', name: '小川 航基', club: 'NECナイメヘン', flag: 'nl', pos: 'MF/FW' },
+    { id: 'p16', name: '前田 大然', club: 'セルティック', flag: 'gb-sct', pos: 'MF/FW' },
+    { id: 'p17', name: '堂安 律', club: 'アイントラハト・フランクフルト', flag: 'de', pos: 'MF/FW' },
+    { id: 'p18', name: '上田 綺世', club: 'フェイエノールト', flag: 'nl', pos: 'MF/FW' },
+    { id: 'p19', name: '田中 碧', club: 'リーズ・ユナイテッド', flag: 'gb-eng', pos: 'MF/FW' },
+    { id: 'p20', name: '町野 修斗', club: 'ボルシアMG', flag: 'de', pos: 'MF/FW' },
+    { id: 'p21', name: '中村 敬斗', club: 'スタッド・ランス', flag: 'fr', pos: 'MF/FW' },
+    { id: 'p22', name: '佐野 海舟', club: 'マインツ05', flag: 'de', pos: 'MF/FW' },
+    { id: 'p23', name: '久保 建英', club: 'レアル・ソシエダード', flag: 'es', pos: 'MF/FW' },
+    { id: 'p24', name: '鈴木 唯人', club: 'SCフライブルク', flag: 'de', pos: 'MF/FW' },
+    { id: 'p25', name: '塩貝 健人', club: 'VfLヴォルフスブルク', flag: 'de', pos: 'MF/FW' },
+    { id: 'p26', name: '後藤 啓介', club: 'SCフライブルク', flag: 'de', pos: 'MF/FW' }
+  ];
+
+  // ===== 3-6-1フォーメーションの11枠 =====
+  // groupはコーチ画面の見出し（GK/DF/MF）でまとめる用。slotKeyは各枠の一意な識別子。
+  const formationSlots = [
+    { slotKey: 'gk1',     group: 'GK（1枠）',  label: 'GK' },
+    { slotKey: 'df1',     group: 'DF（3枠）',  label: 'DF①' },
+    { slotKey: 'df2',     group: 'DF（3枠）',  label: 'DF②' },
+    { slotKey: 'df3',     group: 'DF（3枠）',  label: 'DF③' },
+    { slotKey: 'dmf1',    group: 'MF（7枠）',  label: 'ボランチ①' },
+    { slotKey: 'dmf2',    group: 'MF（7枠）',  label: 'ボランチ②' },
+    { slotKey: 'rwb',     group: 'MF（7枠）',  label: '右WB' },
+    { slotKey: 'lwb',     group: 'MF（7枠）',  label: '左WB' },
+    { slotKey: 'ofs1',    group: 'MF（7枠）',  label: 'オフェンシブ①' },
+    { slotKey: 'ofs2',    group: 'MF（7枠）',  label: 'オフェンシブ②' },
+    { slotKey: 'fw',      group: 'MF（7枠）',  label: 'FW' }
+  ];
+
+  // 現在の選出状況（枠key → 選手id）を保持するオブジェクト
+  let assignments = {};
+
+  try {
+    // Firebaseに接続を試みる
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+
+    // 接続確認（書き込みと読み込みのテスト）
+    const testRef = db.ref('connectionTest');
+    testRef.set({
+      message: "接続テスト成功",
+      timestamp: new Date().toISOString()
+    }).then(() => {
+      return testRef.once('value');
+    }).then((snapshot) => {
+      statusEl.className = 'ok';
+      statusEl.innerHTML = `✅ Firebase接続OK`;
+    }).catch((error) => {
+      statusEl.className = 'ng';
+      statusEl.innerHTML = `❌ 接続エラー：${error.message}`;
+    });
+
+  } catch (error) {
+    statusEl.className = 'ng';
+    statusEl.innerHTML = `❌ 初期化エラー：${error.message}`;
+  }
+
+  // ===== ユーザー名の管理（フェーズ5-A：自己承認防止の土台） =====
+
+  const USER_NAME_KEY = 'samuraiBlueUserName'; // ブラウザに記憶させるときの保存名
+  let currentUserName = '';
+
+  // アプリ起動時に、ブラウザに名前が記憶されているか確認する
+  function initUserName() {
+    const saved = localStorage.getItem(USER_NAME_KEY);
+    if (saved) {
+      currentUserName = saved;
+      document.getElementById('currentUserNameLabel').textContent = currentUserName;
+      showScreen('screen-select');
+    } else {
+      showScreen('screen-name');
+    }
+  }
+
+  // 「この名前で始める」が押されたとき
+  function saveUserName() {
+    const input = document.getElementById('nameInput');
+    let name = input.value.trim();
+    if (!name) {
+      alert('名前を入力してください。');
+      return;
+    }
+    // 文字数上限の二重チェック（maxlength属性が回避された場合の安全策として、超えた分は切り詰める）
+    if (name.length > 20) name = name.slice(0, 20);
+    currentUserName = name;
+    localStorage.setItem(USER_NAME_KEY, name);
+    document.getElementById('currentUserNameLabel').textContent = currentUserName;
+    showScreen('screen-select');
+  }
+
+  // 「名前を変更」が押されたとき：入力欄に今の名前を入れた状態で、名前入力画面に戻る
+  function changeUserName() {
+    document.getElementById('nameInput').value = currentUserName;
+    showScreen('screen-name');
+  }
+
+  // ===== 画面切り替えの処理（フェーズ1） =====
+
+  // すべての画面を非表示にしてから、指定した画面だけを表示する関数
+  function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+  }
+
+  // コーチ or 監督 のボタンが押されたときの処理
+  function selectRole(role) {
+    if (role === 'coach') {
+      document.getElementById('mainCard').classList.remove('wide');
+      document.getElementById('mainCard').classList.add('medium');
+      showScreen('screen-coach-hub');
+      loadCoachHub();
+    } else if (role === 'manager') {
+      document.getElementById('mainCard').classList.remove('wide');
+      document.getElementById('mainCard').classList.add('medium');
+      showScreen('screen-manager-hub');
+      loadManagerHub();
+    }
+  }
+
+  // 「役割選択にもどる」が押されたときの処理
+  function backToSelect() {
+    document.getElementById('mainCard').classList.remove('wide');
+    document.getElementById('mainCard').classList.remove('medium');
+    showScreen('screen-select');
+  }
+
+  // ===== コーチ画面の描画 =====
+
+  function renderCoachScreen() {
+    renderFormationSlots();
+    renderPlayerList();
+    updateProgress();
+  }
+
+  // ===== コーチ画面：ステータス確認エリア（改善1、フェーズ5-Bで申請No対応） =====
+
+  let coachWatchRef = null; // 現在監視中のFirebase参照（切り替え時に解除するため）
+
+  function startCoachStatusWatch(selectionNo) {
+    if (!db) return;
+
+    // 別の申請Noを見ていた場合、前の監視はやめる（監視が増え続けないようにする）
+    if (coachWatchRef) {
+      coachWatchRef.off();
+    }
+
+    coachActiveSelectionNo = selectionNo;
+    coachWatchRef = db.ref(selectionPath(selectionNo) + '/currentStatus');
+    coachWatchRef.on('value', (snapshot) => {
+      const current = snapshot.val();
+      renderCoachStatus(current, selectionNo);
+    });
+  }
+
+  function renderCoachStatus(current, selectionNo) {
+    const box = document.getElementById('coachStatusArea');
+
+    // 入力中（コメント入力欄にフォーカスがある間。日本語変換中も含む）は再描画をスキップする
+    const commentEl = document.getElementById('coachCommentInput');
+    if (commentEl && document.activeElement === commentEl) {
+      return;
+    }
+
+    if (!current) {
+      box.innerHTML = `
+        <div class="coach-status-box none">
+          <div class="status-title">📋 まだ申請していません</div>
+          <div>11人を選んで、監督に申請してください。</div>
+        </div>`;
+      return;
+    }
+
+    // 申請内容を読み込んで、必要なら監督メモも合わせて表示する
+    db.ref(selectionPath(selectionNo) + '/history/' + current.latestHistoryKey).once('value').then((snapshot) => {
+      const record = snapshot.val();
+      let html = '';
+
+      if (current.status === 'submitted') {
+        html = `
+          <div class="coach-status-box waiting">
+            <div class="status-title">⏳ 申請中（監督の判断待ちです）</div>
+            <div>監督が確認するまでお待ちください。</div>
+          </div>`;
+      } else if (current.status === 'resubmitted') {
+        html = `
+          <div class="coach-status-box waiting">
+            <div class="status-title">⏳ 再申請中（監督の判断待ちです）</div>
+            <div>監督が確認するまでお待ちください。</div>
+          </div>`;
+      } else if (current.status === 'rejected') {
+        html = `
+          <div class="coach-status-box rejected">
+            <div class="status-title">↩️ 差し戻されました</div>
+            <div>下記の理由を確認し、選手を選び直して再申請してください。</div>
+            <div class="status-memo">📝 監督からの理由：${record && record.decisionMemo ? record.decisionMemo : '（理由の記載なし）'}</div>
+          </div>`;
+      } else if (current.status === 'approved') {
+        html = `
+          <div class="coach-status-box confirmed">
+            <div class="status-title">✅ 承認済み・確定しました</div>
+            <div>あなたの申請通りのスタメンで確定しました。</div>
+          </div>`;
+      } else if (current.status === 'managerDecided') {
+        html = `
+          <div class="coach-status-box confirmed">
+            <div class="status-title">🎯 監督決定・確定しました</div>
+            <div>監督が一部を変更して確定しました。</div>
+            <div class="status-memo">📝 監督からのコメント：${record && record.decisionMemo ? record.decisionMemo : '（コメントなし）'}</div>
+          </div>`;
+      }
+
+      document.getElementById('coachStatusArea').innerHTML = html;
+    });
+  }
+
+  // 左側：11枠を描画する（グループ見出しごとにまとめる）
+  function renderFormationSlots() {
+    const container = document.getElementById('formationSlots');
+    container.innerHTML = '';
+
+    let currentGroup = '';
+    formationSlots.forEach(slot => {
+      if (slot.group !== currentGroup) {
+        currentGroup = slot.group;
+        const groupLabel = document.createElement('div');
+        groupLabel.className = 'position-group-label';
+        groupLabel.textContent = currentGroup;
+        container.appendChild(groupLabel);
+      }
+
+      const assignedPlayerId = assignments[slot.slotKey];
+      const assignedPlayer = players.find(p => p.id === assignedPlayerId);
+
+      const slotEl = document.createElement('div');
+      slotEl.className = 'position-slot' + (assignedPlayer ? ' filled' : '');
+
+      const labelEl = document.createElement('span');
+      labelEl.className = 'slot-label';
+      labelEl.textContent = slot.label;
+      slotEl.appendChild(labelEl);
+
+      if (assignedPlayer) {
+        const nameEl = document.createElement('span');
+        nameEl.className = 'slot-player';
+        nameEl.textContent = assignedPlayer.name;
+        slotEl.appendChild(nameEl);
+
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'clear-btn';
+        clearBtn.textContent = '取消';
+        clearBtn.onclick = () => clearSlot(slot.slotKey);
+        slotEl.appendChild(clearBtn);
+      } else {
+        const emptyEl = document.createElement('span');
+        emptyEl.className = 'slot-empty';
+        emptyEl.textContent = '未選出';
+        slotEl.appendChild(emptyEl);
+      }
+
+      container.appendChild(slotEl);
+    });
+  }
+
+  // 右側：26人のリストを描画する（それぞれに「○○へ」ボタンをつける）
+  function renderPlayerList() {
+    const container = document.getElementById('playerList');
+    container.innerHTML = '';
+
+    const usedPlayerIds = Object.values(assignments);
+
+    players.forEach(player => {
+      const isUsed = usedPlayerIds.includes(player.id);
+
+      const card = document.createElement('div');
+      card.className = 'player-card' + (isUsed ? ' used' : '');
+
+      const info = document.createElement('div');
+      info.className = 'player-info';
+      info.innerHTML = `
+        <span>
+          <span class="player-name">${player.name}</span><br>
+          <span class="player-club">${player.club} <img class="flag-icon" src="https://flagcdn.com/h20/${player.flag}.png" alt="${player.flag}"></span>
+        </span>
+        <span class="player-pos-tag">${player.pos}</span>
+      `;
+      card.appendChild(info);
+
+      if (!isUsed) {
+        // PC用：まだ使われていない選手にだけ「割り当てボタン（11個）」を表示する
+        const btnRow = document.createElement('div');
+        btnRow.className = 'assign-buttons';
+        formationSlots.forEach(slot => {
+          const btn = document.createElement('button');
+          btn.className = 'assign-btn';
+          btn.textContent = slot.label;
+          btn.onclick = () => assignPlayer(slot.slotKey, player.id);
+          btnRow.appendChild(btn);
+        });
+        card.appendChild(btnRow);
+
+        // スマホ用：タップすると「どの枠に入れるか」を選ぶポップアップを開くボタン
+        const mobileBtn = document.createElement('button');
+        mobileBtn.className = 'mobile-assign-btn';
+        mobileBtn.textContent = '枠を選んで配置する';
+        mobileBtn.onclick = () => openMobileAssignModal(player.id, player.name);
+        card.appendChild(mobileBtn);
+      }
+
+      container.appendChild(card);
+    });
+  }
+
+  // 選手をある枠に割り当てる処理（重複防止つき）
+  function assignPlayer(slotKey, playerId) {
+    // すでにこの選手が「別の枠」に入っている場合は、そちらを解除する
+    // （同じ選手が2つの枠に重複しないようにするための処理）
+    Object.keys(assignments).forEach(key => {
+      if (assignments[key] === playerId) {
+        delete assignments[key];
+      }
+    });
+
+    assignments[slotKey] = playerId;
+    renderCoachScreen();
+  }
+
+  // 枠の選出を取り消す処理
+  function clearSlot(slotKey) {
+    delete assignments[slotKey];
+    renderCoachScreen();
+  }
+
+  // ===== スマホ用：枠選択ポップアップ（ボトムシート） =====
+
+  // 「枠を選んで配置する」ボタンが押されたとき：その選手を、どの枠に入れるか選ぶ一覧を開く
+  function openMobileAssignModal(playerId, playerName) {
+    document.getElementById('mobileModalPlayerName').textContent = `${playerName} を配置する枠を選んでください`;
+
+    const optionsBox = document.getElementById('mobileModalOptions');
+    optionsBox.innerHTML = '';
+
+    formationSlots.forEach(slot => {
+      const filledPlayerId = assignments[slot.slotKey];
+      const filledPlayer = players.find(p => p.id === filledPlayerId);
+
+      const btn = document.createElement('button');
+      btn.className = 'mobile-modal-option';
+      // すでに別の選手が入っている枠は、それが分かるように表示する（上書きされることを伝える）
+      btn.textContent = filledPlayer ? `${slot.label}（現在：${filledPlayer.name}　→ 入れ替え）` : `${slot.label}（空き）`;
+      btn.onclick = () => {
+        assignPlayer(slot.slotKey, playerId);
+        closeMobileAssignModal();
+      };
+      optionsBox.appendChild(btn);
+    });
+
+    document.getElementById('mobileAssignModal').classList.add('active');
+  }
+
+  // ポップアップを閉じる処理（背景タップ or キャンセルボタン）
+  function closeMobileAssignModal(event) {
+    // 背景（overlay）自体がクリックされた場合のみ閉じる。シート内部のクリックでは閉じない。
+    if (event && event.target.id !== 'mobileAssignModal') return;
+    document.getElementById('mobileAssignModal').classList.remove('active');
+  }
+
+  // 進捗（何人選出済みか）の表示と、申請ボタンの有効・無効を切り替える
+  function updateProgress() {
+    const filledCount = Object.keys(assignments).length;
+    const totalSlots = formationSlots.length;
+
+    document.getElementById('progressNote').textContent = `${filledCount} / ${totalSlots} 人 選出済み`;
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = (filledCount !== totalSlots);
+  }
+
+  // ===== Firebase保存・読み込み（フェーズ3〜5） =====
+
+  // このアプリのデータをまとめて入れる場所（ルートのキー）
+  const APP_ROOT = 'samuraiBlueSelection';
+
+  // 現在コーチ・監督それぞれが開いている「申請No」を覚えておく変数
+  let coachActiveSelectionNo = null;
+  let managerActiveSelectionNo = null;
+
+  // 監督の判断操作（承認・決定・差し戻し・取り消し）の連打を防ぐためのフラグ
+  // true の間は、Firebaseへの書き込みが既に進行中であることを示す
+  let managerActionInProgress = false;
+
+  // 指定した申請Noの場所（パス）を組み立てるヘルパー関数
+  // 例：selectionPath(3) → "samuraiBlueSelection/selections/3"
+  function selectionPath(selectionNo) {
+    return APP_ROOT + '/selections/' + selectionNo;
+  }
+
+  // ===== 開発用：データリセット機能 =====
+  // テスト中にデータが溜まって分かりにくくなったとき、まっさらな状態に戻すための機能。
+  // 誤操作で大事なデータを消さないよう、2段階の確認を行う。
+  function resetAllData() {
+    if (!db) {
+      alert('Firebaseに接続できていません。');
+      return;
+    }
+    const ok1 = confirm('⚠️ 申請データ・履歴をすべて削除します。この操作は取り消せません。本当によろしいですか？');
+    if (!ok1) return;
+
+    const ok2 = confirm('最終確認です。本当に全データを削除してよろしいですか？');
+    if (!ok2) return;
+
+    db.ref(APP_ROOT).remove().then(() => {
+      alert('データをリセットしました。最初の状態に戻ります。');
+    }).catch((error) => {
+      alert('リセットに失敗しました：' + error.message);
+    });
+  }
+
+  // ===== コーチ用ハブ画面（フェーズ5-B、3区分リストに再編） =====
+
+  // コーチメニューを開いたとき：全申請を「申請中／差戻／承認済み」の3区分に分けて一覧表示する
+  function loadCoachHub() {
+    const submittedBox = document.getElementById('coachSubmittedListArea');
+    const rejectedBox = document.getElementById('coachRejectedListArea');
+    const approvedBox = document.getElementById('coachApprovedListArea');
+
+    submittedBox.innerHTML = '<p style="font-size:13px; color:#a9b8d4;">読み込み中…</p>';
+    rejectedBox.innerHTML = '';
+    approvedBox.innerHTML = '';
+
+    if (!db) return;
+
+    db.ref(APP_ROOT + '/selections').once('value').then((snapshot) => {
+      const all = snapshot.val() || {};
+      const items = [];
+
+      const reads = Object.keys(all).map((no) => {
+        const sel = all[no];
+        if (!sel.currentStatus) return Promise.resolve();
+        const status = sel.currentStatus.status;
+
+        return db.ref(selectionPath(no) + '/history/' + sel.currentStatus.latestHistoryKey).once('value').then((histSnap) => {
+          const record = histSnap.val();
+          items.push({
+            no,
+            title: sel.title,
+            status,
+            applicantName: (record && record.submittedBy) ? record.submittedBy : (sel.createdBy || '不明')
+          });
+        });
+      });
+
+      Promise.all(reads).then(() => {
+        const submitted = items.filter(i => i.status === 'submitted' || i.status === 'resubmitted').sort((a, b) => Number(a.no) - Number(b.no));
+        const rejected = items.filter(i => i.status === 'rejected').sort((a, b) => Number(a.no) - Number(b.no));
+        const approved = items.filter(i => i.status === 'approved' || i.status === 'managerDecided').sort((a, b) => Number(b.no) - Number(a.no));
+
+        submittedBox.innerHTML = renderEntryList(submitted, '申請中の申請はありません。', 'viewCoachDetail');
+        rejectedBox.innerHTML = renderEntryList(rejected, '差し戻しを受けた申請はありません。', 'viewCoachDetail');
+        approvedBox.innerHTML = renderEntryList(approved, 'まだ確定したスタメンはありません。', 'viewCoachDetail');
+      });
+    });
+  }
+
+  // 一覧表示のHTMLを組み立てる共通関数（コーチ・監督どちらの一覧でも使う）
+  // onClickFnName: クリックされたときに呼ぶ関数の名前（例: "viewCoachDetail" や "openManagerSelection"）
+  function renderEntryList(list, emptyMessage, onClickFnName) {
+    if (list.length === 0) {
+      return `<p style="font-size:13px; color:#7b93a8;">${emptyMessage}</p>`;
+    }
+    return '<div class="manager-list">' + list.map(item => `
+      <div class="list-entry-row" onclick="${onClickFnName}('${item.no}', '${item.title}')">
+        <span class="entry-no">No${item.no}（${item.applicantName}）</span>
+        <span class="entry-title">${item.title}（${statusToLabel(item.status)}）</span>
+      </div>`).join('') + '</div>';
+  }
+
+  // コーチ視点で、申請の詳細を見る（差し戻し中なら「再申請する」ボタンを出す）
+  function viewCoachDetail(selectionNo) {
+    showScreen('screen-coach-detail');
+    const box = document.getElementById('coachDetailArea');
+    box.innerHTML = '<p style="font-size:13px; color:#a9b8d4;">読み込み中…</p>';
+
+    db.ref(selectionPath(selectionNo)).once('value').then((snapshot) => {
+      const sel = snapshot.val();
+      if (!sel || !sel.currentStatus) {
+        box.innerHTML = '<p>データが見つかりませんでした。</p>';
+        return;
+      }
+      db.ref(selectionPath(selectionNo) + '/history/' + sel.currentStatus.latestHistoryKey).once('value').then((histSnap) => {
+        const record = histSnap.val();
+        const status = sel.currentStatus.status;
+
+        let html = `<p style="font-size:13px; color:#a9b8d4;">No${selectionNo}：${sel.title}</p>`;
+        html += `<span class="status-badge status-waiting">${statusToLabel(status)}</span>`;
+        html += '<div class="manager-list">';
+        formationSlots.forEach(slot => {
+          const playerId = record.assignments[slot.slotKey];
+          const player = players.find(p => p.id === playerId);
+          html += `
+            <div class="manager-slot-row">
+              <span class="slot-label">${slot.label}</span>
+              <span>${player ? player.name : '（未選出）'}</span>
+            </div>`;
+        });
+        html += '</div>';
+
+        if (record.decisionMemo) {
+          html += `<p style="font-size:13px; color:#e0c483; margin-top:8px;">📝 監督からのコメント：${record.decisionMemo}</p>`;
+        }
+
+        html += `<div class="manager-actions"><button class="action-btn action-decide" onclick="openHistoryTimeline('${selectionNo}', 'screen-coach-detail')">申請/承認履歴の確認</button></div>`;
+
+        // 差し戻し中の場合だけ、ここから再申請に進めるボタンを出す
+        if (status === 'rejected') {
+          html += `<div class="manager-actions"><button class="submit-btn" onclick="resumeSelection('${selectionNo}', '${sel.title}')">この申請を再申請する</button></div>`;
+        }
+
+        box.innerHTML = html;
+      });
+    });
+  }
+
+  // 「再申請する」ボタンが押されたとき：選手選び画面へ。前回の選出内容をそのまま引き継ぐ
+  function resumeSelection(selectionNo, title) {
+    coachActiveSelectionNo = selectionNo;
+    document.getElementById('coachSelectionNoLabel').textContent = selectionNo;
+    document.getElementById('coachSelectionTitleLabel').textContent = title;
+
+    // 前回（差し戻された時点）の選出内容を読み込んで、選手選び画面に引き継ぐ
+    db.ref(selectionPath(selectionNo) + '/currentStatus').once('value').then((statusSnap) => {
+      const current = statusSnap.val();
+      return db.ref(selectionPath(selectionNo) + '/history/' + current.latestHistoryKey).once('value');
+    }).then((histSnap) => {
+      const record = histSnap.val();
+      assignments = record && record.assignments ? Object.assign({}, record.assignments) : {};
+      showScreen('screen-coach');
+      renderCoachScreen();
+      startCoachStatusWatch(selectionNo);
+      // 再申請は「差し戻しへの回答」を新しく書く場面のため、コメント欄は空にしておく
+      document.getElementById('coachCommentInput').value = '';
+      // ボタンの文言も「再申請する」に切り替える（新規申請とは行為の意味合いが異なるため）
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.textContent = 'この11人で再申請する';
+      submitBtn.dataset.mode = 'resubmit';
+    }).catch((error) => {
+      alert('前回の内容の読み込みに失敗しました：' + error.message);
+      assignments = {};
+      showScreen('screen-coach');
+      renderCoachScreen();
+      startCoachStatusWatch(selectionNo);
+    });
+  }
+
+  // ===== 新規申請の開始（フェーズ5-B） =====
+
+  // 「新規申請を始める」ボタンが押されたとき：次の申請Noを発番し、タイトル入力画面を表示する
+  function openNewSelectionForm() {
+    if (!db) {
+      alert('Firebaseに接続できていません。');
+      return;
+    }
+    // nextSelectionNoを使って、次に使うべき番号を取得する（無ければ1番から開始）
+    db.ref(APP_ROOT + '/nextSelectionNo').once('value').then((snapshot) => {
+      const nextNo = snapshot.val() || 1;
+      document.getElementById('newSelectionNoLabel').textContent = nextNo;
+      document.getElementById('newSelectionTitleInput').value = '';
+      document.getElementById('newSelectionTitleInput').dataset.selectionNo = nextNo;
+      showScreen('screen-new-selection');
+    });
+  }
+
+  // タイトルを入力して「選手選びへ進む」を押したとき：申請Noの箱を作り、選手選び画面へ進む
+  function confirmNewSelectionTitle() {
+    const titleInput = document.getElementById('newSelectionTitleInput');
+    let title = titleInput.value.trim();
+    if (!title) {
+      alert('タイトルを入力してください。');
+      return;
+    }
+    // 文字数上限の二重チェック（maxlength属性が回避された場合の安全策）
+    if (title.length > 30) title = title.slice(0, 30);
+    const selectionNo = titleInput.dataset.selectionNo;
+
+    // 申請Noの箱を作成し、同時にnextSelectionNoを1つ進める
+    const updates = {};
+    updates['selections/' + selectionNo + '/title'] = title;
+    updates['selections/' + selectionNo + '/createdAt'] = new Date().toISOString();
+    updates['selections/' + selectionNo + '/createdBy'] = currentUserName;
+    updates['nextSelectionNo'] = Number(selectionNo) + 1;
+
+    db.ref(APP_ROOT).update(updates).then(() => {
+      // 作成した申請Noを「今操作中の申請」として記憶し、選手選び画面へ
+      coachActiveSelectionNo = selectionNo;
+      assignments = {}; // 選手選びの状態を空にする（新規申請のため）
+      document.getElementById('coachSelectionNoLabel').textContent = selectionNo;
+      document.getElementById('coachSelectionTitleLabel').textContent = title;
+      document.getElementById('coachCommentInput').value = ''; // コメント欄も空にする（新規申請のため）
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.textContent = 'この11人で申請する'; // 新規申請用の文言に戻す
+      submitBtn.dataset.mode = 'new';
+      showScreen('screen-coach');
+      renderCoachScreen();
+      startCoachStatusWatch(selectionNo);
+    }).catch((error) => {
+      alert('申請の作成に失敗しました：' + error.message);
+    });
+  }
+
+  // ステータスのコードを、画面表示用の日本語ラベルに変換する共通関数
+  function statusToLabel(status) {
+    const map = {
+      submitted: '申請中',
+      resubmitted: '再申請中',
+      rejected: '差し戻し中',
+      approved: '承認済み・確定',
+      managerDecided: '監督決定・確定'
+    };
+    return map[status] || status;
+  }
+
+  // ===== 履歴タイムライン（証跡の見える化） =====
+  // record.type の値ごとに、「誰の・どんな行動か」を日本語と役割アイコンに変換する
+  function historyEventInfo(record) {
+    const map = {
+      firstSubmission: { label: '新規申請', role: 'コーチ', icon: '📋', who: record.submittedBy },
+      resubmission:    { label: '再申請',   role: 'コーチ', icon: '📋', who: record.submittedBy },
+      decision:        { label: (record.status === 'approved') ? '承認' : '監督決定', role: '監督', icon: '🎯', who: record.decidedBy },
+      rejection:       { label: '差し戻し', role: '監督', icon: '🎯', who: record.decidedBy },
+      undo:            { label: '確定の取り消し', role: '監督', icon: '🎯', who: record.decidedBy }
+    };
+    return map[record.type] || { label: record.type || '不明な操作', role: '-', icon: '❔', who: '-' };
+  }
+
+  // 「履歴を見る」ボタンが押されたとき：その申請Noの全履歴を時系列で取得・表示する
+  // backScreenId: 「もどる」を押したときに戻る先の画面ID（呼び出し元によって変わる）
+  function openHistoryTimeline(selectionNo, backScreenId) {
+    document.getElementById('historyBackLink').setAttribute('onclick', `showScreen('${backScreenId}')`);
+    showScreen('screen-history-timeline');
+    const box = document.getElementById('historyTimelineArea');
+    box.innerHTML = '<p style="font-size:13px; color:#a9b8d4;">読み込み中…</p>';
+
+    db.ref(selectionPath(selectionNo)).once('value').then((snapshot) => {
+      const sel = snapshot.val();
+      if (!sel || !sel.history) {
+        box.innerHTML = '<p>履歴データが見つかりませんでした。</p>';
+        return;
+      }
+
+      // historyはpushキー（時系列順に並ぶ性質を持つ）でオブジェクト形式になっているため、配列に変換する
+      const entries = Object.keys(sel.history).map(key => sel.history[key]);
+      // 念のため、日時で確実に古い順に並べ替える
+      entries.sort((a, b) => {
+        const ta = new Date(a.submittedAt || a.decidedAt).getTime();
+        const tb = new Date(b.submittedAt || b.decidedAt).getTime();
+        return ta - tb;
+      });
+
+      let html = `<p style="font-size:13px; color:#a9b8d4;">No${selectionNo}：${sel.title}</p>`;
+      html += '<div class="manager-list">';
+
+      entries.forEach((record, index) => {
+        const info = historyEventInfo(record);
+        const when = record.submittedAt || record.decidedAt || '';
+        const whenLabel = when ? new Date(when).toLocaleString('ja-JP') : '日時不明';
+
+        html += `<div class="change-panel" style="text-align:left; margin-bottom:10px;">
+          <p style="margin:0 0 6px 0; color:#e0c483; font-size:13px;">
+            ${index + 1}. ${info.icon} ${info.label}　
+            <span style="color:#a9b8d4; font-size:12px;">（${info.role}：${info.who || '不明'} ／ ${whenLabel}）</span>
+          </p>`;
+
+        // この記録の時点での11人の内容を、簡潔に1行で表示する
+        const namesLine = formationSlots.map(slot => {
+          const player = players.find(p => p.id === record.assignments[slot.slotKey]);
+          return player ? player.name : '－';
+        }).join('　');
+        html += `<p style="font-size:12px; color:#cfd8e3; margin:4px 0;">${namesLine}</p>`;
+
+        if (record.coachComment) {
+          html += `<p style="font-size:12px; color:#a9b8d4; margin:4px 0;">📝 コーチコメント：${record.coachComment}</p>`;
+        }
+        if (record.decisionMemo) {
+          html += `<p style="font-size:12px; color:#e0c483; margin:4px 0;">📝 監督コメント：${record.decisionMemo}</p>`;
+        }
+
+        html += '</div>';
+      });
+
+      html += '</div>';
+      box.innerHTML = html;
+    });
+  }
+
+  // 申請ボタンが押されたときの処理：Firebaseに新しい申請履歴を追加する
+  function submitApplication() {
+    if (!db) {
+      alert('Firebaseに接続できていません。画面上部の接続状況を確認してください。');
+      return;
+    }
+    if (!coachActiveSelectionNo) {
+      alert('申請Noが特定できません。コーチメニューからやり直してください。');
+      return;
+    }
+    // 11人すべて選出済みかを、ボタンのdisabled制御とは別にここでも確認する（二重の安全策）
+    if (Object.keys(assignments).length !== formationSlots.length) {
+      alert('11人すべてを選出してから申請してください。');
+      return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = '申請中…';
+
+    const basePath = selectionPath(coachActiveSelectionNo);
+    let coachComment = document.getElementById('coachCommentInput').value.trim();
+    if (coachComment.length > 300) coachComment = coachComment.slice(0, 300);
+
+    // 現在のステータスを確認してから、申請の種類（新規 or 再申請）を判断する
+    db.ref(basePath + '/currentStatus').once('value').then((snapshot) => {
+      const current = snapshot.val();
+      const isResubmission = current && current.status === 'rejected';
+
+      const newRecord = {
+        assignments: assignments,           // 選んだ11人（枠key → 選手id）
+        submittedAt: new Date().toISOString(),
+        submittedBy: currentUserName,       // 申請した人の名前（自己承認防止に使う）
+        coachComment: coachComment,         // この構成を選んだ狙い（監督に表示される）
+        type: isResubmission ? 'resubmission' : 'firstSubmission', // 新規申請か再申請か
+        status: isResubmission ? 'resubmitted' : 'submitted'
+      };
+
+      // historyに新しい記録を追加する（pushを使うと、自動で連番のキーが振られて
+      // 過去の記録は消えずに積み重なっていく）
+      const newHistoryRef = db.ref(basePath + '/history').push();
+      return newHistoryRef.set(newRecord).then(() => {
+        // currentStatusも合わせて更新する（コーチ画面・監督画面が今の状況を判断するための看板）
+        return db.ref(basePath + '/currentStatus').set({
+          status: newRecord.status,
+          latestHistoryKey: newHistoryRef.key,
+          updatedAt: newRecord.submittedAt
+        });
+      });
+    }).then(() => {
+      submitBtn.textContent = '申請しました ✓';
+      alert('監督に申請しました。監督の判断をお待ちください。');
+    }).catch((error) => {
+      alert('申請の保存に失敗しました：' + error.message);
+      submitBtn.disabled = false;
+      submitBtn.textContent = (submitBtn.dataset.mode === 'resubmit') ? 'この11人で再申請する' : 'この11人で申請する';
+    });
+  }
+
+  // ===== 監督画面：申請内容の確認・判断（フェーズ3〜4、5-Bで申請No対応） =====
+
+  let managerWatchRef = null;        // 現在監視中のFirebase参照
+  let managerCurrentRecord = null;   // 今表示中の申請記録（コーチの原案）
+  let managerCurrentStatusObj = null;// 今のcurrentStatus全体（status, latestHistoryKeyなど）
+  let managerEdited = {};            // 監督が変更した内容（枠key → 選手id）。変更してない枠は入らない
+  let managerOpenChangeSlot = null;  // 今「選び直し中」の枠（1つだけ開く）
+
+  // ===== 監督用ハブ画面（フェーズ5-B） =====
+
+  function loadManagerHub() {
+    const pendingBox = document.getElementById('managerPendingListArea');
+    const doneBox = document.getElementById('managerDoneListArea');
+    pendingBox.innerHTML = '<p style="font-size:13px; color:#a9b8d4;">読み込み中…</p>';
+    doneBox.innerHTML = '';
+
+    if (!db) return;
+
+    db.ref(APP_ROOT + '/selections').once('value').then((snapshot) => {
+      const all = snapshot.val() || {};
+      const items = [];
+
+      // 申請者名を表示するために、それぞれの最新履歴を読み込む（並行して取得する）
+      const reads = Object.keys(all).map((no) => {
+        const sel = all[no];
+        if (!sel.currentStatus) return Promise.resolve();
+        const status = sel.currentStatus.status;
+
+        return db.ref(selectionPath(no) + '/history/' + sel.currentStatus.latestHistoryKey).once('value').then((histSnap) => {
+          const record = histSnap.val();
+          items.push({
+            no,
+            title: sel.title,
+            status,
+            applicantName: (record && record.submittedBy) ? record.submittedBy : (sel.createdBy || '不明')
+          });
+        });
+      });
+
+      Promise.all(reads).then(() => {
+        const pending = items.filter(i => i.status === 'submitted' || i.status === 'resubmitted');
+        const done = items.filter(i => i.status === 'approved' || i.status === 'managerDecided');
+
+        pending.sort((a, b) => Number(a.no) - Number(b.no));
+        done.sort((a, b) => Number(b.no) - Number(a.no));
+
+        pendingBox.innerHTML = renderEntryList(pending, '未承認の申請はありません。', 'openManagerSelection');
+        doneBox.innerHTML = renderEntryList(done, '承認済みの申請はまだありません。', 'openManagerSelection');
+      });
+    });
+  }
+
+  // 監督が一覧から1つの申請をクリックしたとき：詳細・判断画面を開く
+  function openManagerSelection(selectionNo, title) {
+    managerActiveSelectionNo = selectionNo;
+    document.getElementById('managerSelectionNoLabel').textContent = selectionNo;
+    document.getElementById('managerSelectionTitleLabel').textContent = title;
+    showScreen('screen-manager');
+    startManagerWatch(selectionNo);
+  }
+
+  function startManagerWatch(selectionNo) {
+    if (!db) {
+      document.getElementById('managerContent').innerHTML = '<p>❌ Firebaseに接続できていません。</p>';
+      return;
+    }
+
+    // 別の申請Noを見ていた場合、前の監視はやめる
+    if (managerWatchRef) {
+      managerWatchRef.off();
+    }
+
+    managerActiveSelectionNo = selectionNo;
+    managerWatchRef = db.ref(selectionPath(selectionNo) + '/currentStatus');
+    managerWatchRef.on('value', (statusSnapshot) => {
+      const current = statusSnapshot.val();
+      handleStatusChange(current, selectionNo);
+    });
+  }
+
+  function handleStatusChange(current, selectionNo) {
+    const container = document.getElementById('managerContent');
+
+    // 入力中（コメント入力欄にフォーカスがある間。日本語変換中も含む）は再描画をスキップする。
+    // ここで画面を作り直すと、入力中の文字や変換セッションが壊れてしまうため。
+    const memoEl = document.getElementById('memoInput');
+    if (memoEl && document.activeElement === memoEl) {
+      return;
+    }
+
+    // まだ一度も申請が無い場合
+    if (!current) {
+      container.innerHTML = `
+        <span class="status-badge status-none">申請なし</span>
+        <p>まだコーチから申請が届いていません。</p>
+      `;
+      return;
+    }
+
+    // 監督が判断すべき状態（申請中 or 再申請中）でなければ、結果だけ表示する
+    if (current.status !== 'submitted' && current.status !== 'resubmitted') {
+      db.ref(selectionPath(selectionNo) + '/history/' + current.latestHistoryKey).once('value').then((snapshot) => {
+        const record = snapshot.val();
+        renderManagerResult(current, record);
+      });
+      return;
+    }
+
+    // 新しい申請が来たら、編集状態をリセットする
+    managerEdited = {};
+    managerOpenChangeSlot = null;
+    managerCurrentStatusObj = current;
+
+    db.ref(selectionPath(selectionNo) + '/history/' + current.latestHistoryKey).once('value').then((snapshot) => {
+      managerCurrentRecord = snapshot.val();
+      renderManagerScreen(current, managerCurrentRecord);
+    });
+  }
+
+  // すでに確定（承認・監督決定）した結果を表示するだけの画面
+  function renderManagerResult(current, record) {
+    const container = document.getElementById('managerContent');
+    const statusLabel = (current.status === 'approved') ? '承認済み・確定'
+                       : (current.status === 'managerDecided') ? '監督決定・確定'
+                       : current.status;
+
+    let html = `<span class="status-badge status-waiting">${statusLabel}</span>`;
+    html += '<div class="manager-list">';
+    formationSlots.forEach(slot => {
+      const playerId = record.assignments[slot.slotKey];
+      const player = players.find(p => p.id === playerId);
+      html += `
+        <div class="manager-slot-row">
+          <span class="slot-label">${slot.label}</span>
+          <span>${player ? player.name : '（未選出）'}</span>
+        </div>
+      `;
+    });
+    html += '</div>';
+    if (record.decisionMemo) {
+      html += `<p style="font-size:13px; color:#e0c483; margin-top:8px;">📝 監督メモ：${record.decisionMemo}</p>`;
+    }
+
+    html += `<div class="manager-actions"><button class="action-btn action-decide" onclick="openHistoryTimeline('${managerActiveSelectionNo}', 'screen-manager')">申請/承認履歴の確認</button></div>`;
+
+    // 確定済み（承認 or 監督決定）の場合だけ「取り消し」ボタンを出す
+    if (current.status === 'approved' || current.status === 'managerDecided') {
+      html += `
+        <div class="manager-actions">
+          <button class="action-btn action-reject" onclick="undoDecision()">この確定を取り消す（差し戻し中に戻す）</button>
+        </div>
+      `;
+    }
+
+    container.innerHTML = html;
+  }
+
+  // 申請中・再申請中の画面（変更・承認・差し戻し操作ができる画面）
+  function renderManagerScreen(current, record) {
+    const container = document.getElementById('managerContent');
+    if (!record) {
+      container.innerHTML = '<p>申請データの取得に失敗しました。</p>';
+      return;
+    }
+
+    // ===== 自己承認防止（フェーズ5-A） =====
+    // 申請者本人が、自分の申請を判断しようとしていないかチェックする
+    const isSelfApplication = record.submittedBy && record.submittedBy === currentUserName;
+
+    const statusLabel = (current.status === 'submitted') ? '申請中（初回）' : '再申請中';
+    const hasChanges = Object.keys(managerEdited).length > 0;
+
+    let html = `<span class="status-badge status-waiting">${statusLabel}</span>`;
+    html += `<p style="font-size:12px; color:#a9b8d4; margin-top:-8px;">申請者：${record.submittedBy || '（不明）'}</p>`;
+
+    if (record.coachComment) {
+      html += `<div class="coach-status-box waiting" style="margin-bottom:16px;">
+          <div class="status-title">📝 コーチからのコメント</div>
+          <div>${record.coachComment}</div>
+        </div>`;
+    }
+
+    if (isSelfApplication) {
+      html += `
+        <div class="coach-status-box rejected">
+          <div class="status-title">🚫 自分の申請は自分で判断できません</div>
+          <div>この申請は ${currentUserName} さんご自身が行ったものです。別の方に監督役をお願いしてください。</div>
+        </div>
+      `;
+    }
+
+    html += '<div class="manager-list">';
+
+    formationSlots.forEach(slot => {
+      // 変更されていればmanagerEditedの選手、されていなければコーチの原案の選手を表示
+      const playerId = managerEdited[slot.slotKey] || record.assignments[slot.slotKey];
+      const player = players.find(p => p.id === playerId);
+      const isChanged = !!managerEdited[slot.slotKey];
+
+      html += `<div class="manager-slot-row${isChanged ? ' changed' : ''}">
+          <span class="slot-label">${slot.label}</span>
+          <span class="right-side">
+            <span>${player ? player.name : '（未選出）'}${isChanged ? ' 🔶変更後' : ''}</span>
+            ${(isChanged && !isSelfApplication) ? `<button class="change-btn" onclick="resetManagerChange('${slot.slotKey}')">元に戻す</button>` : ''}
+            ${!isSelfApplication ? `<button class="change-btn" onclick="toggleChangeSlot('${slot.slotKey}')">変更</button>` : ''}
+          </span>
+        </div>`;
+
+      // この枠が「選び直し中」であれば、26人のボタンを下に展開する
+      if (managerOpenChangeSlot === slot.slotKey && !isSelfApplication) {
+        const usedIds = formationSlots.map(s => managerEdited[s.slotKey] || record.assignments[s.slotKey]);
+        html += '<div class="change-panel"><div class="change-panel-row">';
+        players.forEach(p => {
+          const alreadyUsedElsewhere = usedIds.includes(p.id) && p.id !== playerId;
+          if (alreadyUsedElsewhere) return; // 他の枠で使用中の選手は候補に出さない
+          html += `<button class="change-pick-btn" onclick="pickManagerPlayer('${slot.slotKey}', '${p.id}')">${p.name}</button>`;
+        });
+        html += '</div></div>';
+      }
+    });
+
+    html += '</div>';
+
+    // 判断ボタン群（自分の申請の場合はすべて無効化する）
+    html += '<div class="manager-actions">';
+    html += `<button class="action-btn action-approve" onclick="approveAsIs()" ${(hasChanges || isSelfApplication) ? 'disabled' : ''}>この内容で承認する</button>`;
+    html += `<button class="action-btn action-decide" onclick="openDecidePanel()" ${(hasChanges && !isSelfApplication) ? '' : 'disabled'}>変更を加えて決定する</button>`;
+    html += `<button class="action-btn action-reject" onclick="openRejectPanel()" ${isSelfApplication ? 'disabled' : ''}>差し戻す</button>`;
+    html += '</div>';
+
+    html += '<div id="memoPanel"></div>';
+
+    html += `<div class="manager-actions"><button class="action-btn action-decide" onclick="openHistoryTimeline('${managerActiveSelectionNo}', 'screen-manager')">申請/承認履歴の確認</button></div>`;
+
+    container.innerHTML = html;
+  }
+
+  // 「変更」ボタンが押されたとき：その枠の選び直しパネルを開く・閉じる
+  function toggleChangeSlot(slotKey) {
+    managerOpenChangeSlot = (managerOpenChangeSlot === slotKey) ? null : slotKey;
+    renderManagerScreen(managerCurrentStatusObj, managerCurrentRecord);
+  }
+
+  // 選び直しパネルで選手が選ばれたとき
+  function pickManagerPlayer(slotKey, playerId) {
+    managerEdited[slotKey] = playerId;
+    managerOpenChangeSlot = null;
+    renderManagerScreen(managerCurrentStatusObj, managerCurrentRecord);
+  }
+
+  // 変更を取り消して、コーチの原案に戻す
+  function resetManagerChange(slotKey) {
+    delete managerEdited[slotKey];
+    renderManagerScreen(managerCurrentStatusObj, managerCurrentRecord);
+  }
+
+  // ===== 3つの判断（承認・決定・差し戻し）=====
+
+  // 自分の申請かどうかを再チェックするための共通関数（ボタン無効化の保険）
+  function isSelfApplicationCheck() {
+    if (managerCurrentRecord && managerCurrentRecord.submittedBy === currentUserName) {
+      alert('自分の申請は自分で判断できません。別の方に監督役をお願いしてください。');
+      return true;
+    }
+    return false;
+  }
+
+  // 「この内容で承認する」：コーチの案をそのまま確定する
+  function approveAsIs() {
+    if (isSelfApplicationCheck()) return;
+    finalizeDecision('approved', managerCurrentRecord.assignments, null);
+  }
+
+  // 「変更を加えて決定する」ボタン：メモ入力欄を開く
+  function openDecidePanel() {
+    if (isSelfApplicationCheck()) return;
+    showMemoPanel('decide');
+  }
+
+  // 「差し戻す」ボタン：メモ入力欄を開く
+  function openRejectPanel() {
+    if (isSelfApplicationCheck()) return;
+    showMemoPanel('reject');
+  }
+
+  function showMemoPanel(kind) {
+    const memoPanel = document.getElementById('memoPanel');
+    const isDecide = (kind === 'decide');
+    const title = isDecide ? '📝 変更理由をコーチに伝えてください' : '📝 差し戻し理由をコーチに伝えてください';
+    const btnLabel = isDecide ? 'この内容で決定を確定する' : 'この理由で差し戻す';
+    const btnClass = isDecide ? 'action-decide' : 'action-reject';
+
+    memoPanel.innerHTML = `
+      <div class="change-panel">
+        <p style="font-size:13px; color:#a9b8d4; margin-top:0;">${title}</p>
+        <textarea id="memoInput" class="memo-box" placeholder="理由を入力してください（コーチに表示されます）"></textarea>
+        <button class="action-btn ${btnClass}" onclick="confirmMemo('${kind}')">${btnLabel}</button>
+      </div>
+    `;
+  }
+
+  function confirmMemo(kind) {
+    let memo = document.getElementById('memoInput').value.trim();
+    if (!memo) {
+      alert('理由を入力してください。コーチが状況を理解するために必要です。');
+      return;
+    }
+    // 文字数上限の二重チェック（maxlength属性が回避された場合の安全策）
+    if (memo.length > 300) memo = memo.slice(0, 300);
+
+    if (kind === 'decide') {
+      // コーチの原案 + 監督の変更分をマージした最終案を作る
+      const finalAssignments = Object.assign({}, managerCurrentRecord.assignments, managerEdited);
+      finalizeDecision('managerDecided', finalAssignments, memo);
+    } else {
+      finalizeRejection(memo);
+    }
+  }
+
+  // 確定処理（承認 or 監督決定）：historyに決定記録を追加し、currentStatusを更新する
+  function finalizeDecision(status, finalAssignments, memo) {
+    if (managerActionInProgress) return; // 連打防止：すでに処理中なら何もしない
+    managerActionInProgress = true;
+
+    const basePath = selectionPath(managerActiveSelectionNo);
+    const newRecord = {
+      assignments: finalAssignments,
+      decidedAt: new Date().toISOString(),
+      decidedBy: currentUserName,
+      type: 'decision',
+      status: status
+    };
+    if (memo) newRecord.decisionMemo = memo;
+    // ※コーチコメントはここでは引き継がない（このターンは監督の行動の記録のため）。
+    // コーチの狙いは履歴タイムラインで前のターンを見れば確認できる。
+
+    const newHistoryRef = db.ref(basePath + '/history').push();
+    newHistoryRef.set(newRecord).then(() => {
+      return db.ref(basePath + '/currentStatus').set({
+        status: status,
+        latestHistoryKey: newHistoryRef.key,
+        updatedAt: newRecord.decidedAt
+      });
+    }).then(() => {
+      alert(status === 'approved' ? 'コーチの案を承認し、確定しました。' : '監督の判断で決定し、確定しました。');
+      managerActionInProgress = false;
+      loadManagerHub();
+    }).catch((error) => {
+      alert('保存に失敗しました：' + error.message);
+      managerActionInProgress = false;
+    });
+  }
+
+  // 差し戻し処理：historyに差し戻し記録を追加し、currentStatusを更新する
+  function finalizeRejection(memo) {
+    if (managerActionInProgress) return; // 連打防止：すでに処理中なら何もしない
+    managerActionInProgress = true;
+
+    const basePath = selectionPath(managerActiveSelectionNo);
+    const newRecord = {
+      assignments: managerCurrentRecord.assignments, // 差し戻し時点ではコーチの原案をそのまま記録しておく
+      decidedAt: new Date().toISOString(),
+      decidedBy: currentUserName,
+      type: 'rejection',
+      status: 'rejected',
+      decisionMemo: memo
+    };
+    // ※コーチコメントはここでは引き継がない（このターンは監督の行動の記録のため）。
+    // コーチの狙いは履歴タイムラインで前のターンを見れば確認できる。
+
+    const newHistoryRef = db.ref(basePath + '/history').push();
+    newHistoryRef.set(newRecord).then(() => {
+      return db.ref(basePath + '/currentStatus').set({
+        status: 'rejected',
+        latestHistoryKey: newHistoryRef.key,
+        updatedAt: newRecord.decidedAt
+      });
+    }).then(() => {
+      alert('コーチに差し戻しました。コーチからの再申請をお待ちください。');
+      managerActionInProgress = false;
+      loadManagerHub();
+    }).catch((error) => {
+      alert('保存に失敗しました：' + error.message);
+      managerActionInProgress = false;
+    });
+  }
+
+  // ===== 確定の取り消し（改善2：赤伝方式） =====
+  // 「承認済み」「監督決定」を取り消し、コーチが再申請できる「差し戻し中」状態に戻す。
+  // 取り消し自体も1つの履歴として記録し、何が・いつ・なぜ取り消されたかを証跡として残す。
+  function undoDecision() {
+    if (managerActionInProgress) return; // 連打防止：すでに処理中なら何もしない
+    if (!confirm('この確定を取り消し、コーチが再申請できる状態に戻します。よろしいですか？')) {
+      return;
+    }
+    managerActionInProgress = true;
+
+    const basePath = selectionPath(managerActiveSelectionNo);
+
+    db.ref(basePath + '/currentStatus').once('value').then((statusSnapshot) => {
+      const current = statusSnapshot.val();
+      return db.ref(basePath + '/history/' + current.latestHistoryKey).once('value');
+    }).then((recordSnapshot) => {
+      const previousRecord = recordSnapshot.val();
+
+      const newRecord = {
+        assignments: previousRecord.assignments,
+        decidedAt: new Date().toISOString(),
+        decidedBy: currentUserName,
+        type: 'undo',                 // 「取り消し」であることが分かるよう記録する
+        status: 'rejected',
+        decisionMemo: '（監督による確定の取り消し）'
+      };
+
+      const newHistoryRef = db.ref(basePath + '/history').push();
+      return newHistoryRef.set(newRecord).then(() => {
+        return db.ref(basePath + '/currentStatus').set({
+          status: 'rejected',
+          latestHistoryKey: newHistoryRef.key,
+          updatedAt: newRecord.decidedAt
+        });
+      });
+    }).then(() => {
+      alert('確定を取り消しました。コーチが再申請できる状態に戻りました。');
+      managerActionInProgress = false;
+      loadManagerHub();
+    }).catch((error) => {
+      alert('取り消し処理に失敗しました：' + error.message);
+      managerActionInProgress = false;
+    });
+  }
+
+  // ===== アプリ起動時の初期化 =====
+  // ページが読み込まれたら、まず名前が記憶されているか確認して、最初の画面を決める
+  initUserName();
+</script>
+
+</body>
+</html>
