@@ -249,6 +249,7 @@
     justify-content: space-between;
     align-items: center;
     min-height: 20px;
+    cursor: pointer;
   }
   .position-slot.filled {
     border-style: solid;
@@ -316,30 +317,21 @@
     border-radius: 2px;
     margin-left: 2px;
   }
-  .player-pos-tag {
+  /* 選手一覧の「選出済 / 未選出」ステータスバッジ */
+  .player-status-tag {
     display: inline-block;
-    background: #c9a85c;
-    color: #fff;
     font-size: 11px;
     padding: 2px 8px;
     border-radius: 10px;
+    white-space: nowrap;
   }
-  .assign-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
+  .player-status-tag.status-selected {
+    background: #3a7a54;
+    color: #fff;
   }
-  .assign-btn {
-    background: #1c2f4f;
-    border: 1px solid #c9a85c;
-    color: #e8dfc8;
-    font-size: 11px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  .assign-btn:hover {
-    background: #c9a85c;
+  .player-status-tag.status-unselected {
+    background: #3a4a5e;
+    color: #a9b8d4;
   }
   .submit-btn {
     background: linear-gradient(180deg, #3f8a5c 0%, #336e4a 100%);
@@ -598,6 +590,11 @@
       min-width: 0; /* 縦並びになるので、横幅の最小値指定は不要にする */
       width: 100%;
     }
+    /* スマホ版では「枠をタップして選手を選ぶ」方式に一本化するため、
+       26人の選手リストそのものは表示しない（PC版では引き続き表示） */
+    .coach-right {
+      display: none;
+    }
 
     /* ボタン・タップ領域を指で押しやすい大きさにする */
     .role-btn {
@@ -613,24 +610,6 @@
       font-size: 12px;
     }
 
-    /* PC版の「11個の割り当てボタン」は隠し、スマホ専用の「タップで選ぶ」ボタンに差し替える */
-    .assign-buttons {
-      display: none;
-    }
-    .mobile-assign-btn {
-      display: block;
-      width: 100%;
-      background: var(--gold);
-      color: #1a2a44;
-      border: none;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 6px;
-    }
-
     /* 文字サイズ全体を少し読みやすく調整 */
     h1 {
       font-size: 19px;
@@ -640,12 +619,7 @@
     }
   }
 
-  /* PC幅では、スマホ専用ボタンは表示しない */
-  .mobile-assign-btn {
-    display: none;
-  }
-
-  /* ===== モバイル用：枠選択ポップアップ ===== */
+  /* ===== 枠選択ポップアップ（PC・スマホ共通の土台） ===== */
   .mobile-modal-overlay {
     display: none;
     position: fixed;
@@ -668,6 +642,18 @@
     overflow-y: auto;
     padding: 20px;
     box-sizing: border-box;
+  }
+  /* PC幅（769px以上）では、下からのシートではなく、画面中央のポップアップとして表示する */
+  @media (min-width: 769px) {
+    .mobile-modal-overlay {
+      align-items: center;
+    }
+    .mobile-modal-sheet {
+      border-radius: 12px;
+      border: 1px solid var(--gold);
+      border-top: 1px solid var(--gold);
+      max-height: 80vh;
+    }
   }
   .mobile-modal-title {
     font-family: "Shippori Mincho", serif;
@@ -732,11 +718,17 @@
     <div class="role-buttons">
       <button class="role-btn" onclick="selectRole('coach')">
         <span class="icon">📋</span>
-        コーチ<br><small>（推薦する）</small>
+        コーチ<br><small>（スタメン申請）</small>
       </button>
       <button class="role-btn" onclick="selectRole('manager')">
         <span class="icon">🎯</span>
-        監督<br><small>（決定する）</small>
+        監督<br><small>（スタメン承認）</small>
+      </button>
+    </div>
+    <div class="role-buttons" style="margin-top:14px;">
+      <button class="role-btn" onclick="openArchiveList()">
+        <span class="icon">📜</span>
+        スタメン申請リスト<br><small>（申請承認履歴）</small>
       </button>
     </div>
     <p style="margin-top:28px;">
@@ -744,9 +736,26 @@
     </p>
   </div>
 
+  <!-- 画面X-1: 申請履歴一覧（全員分・役割を問わない閲覧専用画面） -->
+  <div id="screen-archive-list" class="screen">
+    <p class="panel-title" style="border:none;">📜 申請履歴一覧</p>
+    <p style="font-size:12px; color:#a9b8d4;">気になる申請を2〜3件選んで、比較してみましょう。</p>
+    <div id="archiveListArea"></div>
+    <button class="submit-btn" id="compareBtn" onclick="openCompareScreen()" disabled style="margin-top:14px;">比較分析する</button>
+    <span class="back-link" onclick="backToSelect()">← 役割選択にもどる</span>
+  </div>
+
+  <!-- 画面X-2: 比較分析画面 -->
+  <div id="screen-compare" class="screen">
+    <p class="panel-title" style="border:none;">📊 比較分析</p>
+    <div id="compareArea" style="overflow:auto; max-height:70vh;"></div>
+    <span class="back-link" onclick="showScreen('screen-archive-list')">← 申請履歴一覧にもどる</span>
+  </div>
+
   <!-- 画面2-0: コーチ用ハブ画面（新規申請／3区分リスト） -->
   <div id="screen-coach-hub" class="screen">
     <p class="panel-title" style="border:none;">📋 コーチメニュー</p>
+    <p style="font-size:12px; color:#7b93a8; margin-top:-8px;">※以下はすべて、あなた自身が出した申請です。全員分は「スタメン申請リスト」から確認できます。</p>
     <div class="role-buttons">
       <button class="role-btn" onclick="openNewSelectionForm()">
         <span class="icon">🆕</span>
@@ -770,8 +779,11 @@
   <div id="screen-new-selection" class="screen">
     <p class="panel-title" style="border:none;">🆕 新しい申請を始める</p>
     <p style="font-size:13px; color:#a9b8d4;">申請No：<span id="newSelectionNoLabel">-</span>（自動採番）</p>
-    <p>この申請のタイトルを入力してください（例：vsオランダ）</p>
-    <input type="text" id="newSelectionTitleInput" class="memo-box" style="text-align:left; min-height:auto;" placeholder="例：vsオランダ">
+    <p>どの試合のスタメン申請をしますか？対戦相手国を入力してください（例：オランダ）</p>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="font-family:'Shippori Mincho', serif; font-size:18px; color:var(--gold-bright); white-space:nowrap;">vs</span>
+      <input type="text" id="newSelectionTitleInput" class="memo-box" style="text-align:left; min-height:auto; margin:0; flex:1;" placeholder="例：オランダ">
+    </div>
     <button class="submit-btn" onclick="confirmNewSelectionTitle()">この内容で選手選びへ進む</button>
     <span class="back-link" onclick="showScreen('screen-coach-hub')">← もどる</span>
   </div>
@@ -780,7 +792,7 @@
   <div id="screen-coach-detail" class="screen">
     <p class="panel-title" style="border:none;">📄 申請の詳細</p>
     <div id="coachDetailArea"></div>
-    <span class="back-link" onclick="showScreen('screen-coach-hub'); loadCoachHub();">← コーチメニューにもどる</span>
+    <span class="back-link" id="coachDetailBackLink" onclick="showScreen('screen-coach-hub'); loadCoachHub();">← コーチメニューにもどる</span>
   </div>
 
   <!-- 画面X: 申請履歴タイムライン（コーチ・監督共通。証跡の見える化） -->
@@ -811,13 +823,11 @@
     <span class="back-link" onclick="showScreen('screen-coach-hub')">← コーチメニューにもどる</span>
   </div>
 
-  <!-- 画面4-0: 監督用ハブ画面（未承認一覧／承認済み一覧） -->
+  <!-- 画面4-0: 監督用ハブ画面（未承認一覧のみ。承認済みは「申請履歴一覧」で確認する） -->
   <div id="screen-manager-hub" class="screen">
     <p class="panel-title" style="border:none;">🎯 監督メニュー</p>
     <p style="font-size:14px; color:#a9b8d4; margin-top:16px;">⏳ 未承認の申請一覧</p>
     <div id="managerPendingListArea"></div>
-    <p style="font-size:14px; color:#a9b8d4; margin-top:24px;">📜 承認済みの申請</p>
-    <div id="managerDoneListArea"></div>
     <span class="back-link" onclick="backToSelect()">← 役割選択にもどる</span>
   </div>
 
@@ -1111,6 +1121,8 @@
 
       const slotEl = document.createElement('div');
       slotEl.className = 'position-slot' + (assignedPlayer ? ' filled' : '');
+      // 枠そのものをタップすると、その枠に入れる選手を選ぶポップアップが開く（スマホでの主な操作方法）
+      slotEl.onclick = () => openSlotPlayerModal(slot.slotKey, slot.label);
 
       const labelEl = document.createElement('span');
       labelEl.className = 'slot-label';
@@ -1126,7 +1138,11 @@
         const clearBtn = document.createElement('button');
         clearBtn.className = 'clear-btn';
         clearBtn.textContent = '取消';
-        clearBtn.onclick = () => clearSlot(slot.slotKey);
+        // 「取消」を押したときに、枠全体のクリック（モーダルを開く処理）が同時に発火しないようにする
+        clearBtn.onclick = (event) => {
+          event.stopPropagation();
+          clearSlot(slot.slotKey);
+        };
         slotEl.appendChild(clearBtn);
       } else {
         const emptyEl = document.createElement('span');
@@ -1154,35 +1170,20 @@
 
       const info = document.createElement('div');
       info.className = 'player-info';
+      // 「ポジション（GK/DF/MF・FW）」の代わりに、「未選出 or 選出済」のステータスバッジを表示する。
+      // 選手の配置そのものは、左側の11枠をクリックして行う方式に統一したため、
+      // この一覧は「今の選出状況をひと目で確認する」役割に専念させる。
+      const statusBadge = isUsed
+        ? '<span class="player-status-tag status-selected">選出済</span>'
+        : '<span class="player-status-tag status-unselected">未選出</span>';
       info.innerHTML = `
         <span>
           <span class="player-name">${player.name}</span><br>
           <span class="player-club">${player.club} <img class="flag-icon" src="https://flagcdn.com/h20/${player.flag}.png" alt="${player.flag}"></span>
         </span>
-        <span class="player-pos-tag">${player.pos}</span>
+        ${statusBadge}
       `;
       card.appendChild(info);
-
-      if (!isUsed) {
-        // PC用：まだ使われていない選手にだけ「割り当てボタン（11個）」を表示する
-        const btnRow = document.createElement('div');
-        btnRow.className = 'assign-buttons';
-        formationSlots.forEach(slot => {
-          const btn = document.createElement('button');
-          btn.className = 'assign-btn';
-          btn.textContent = slot.label;
-          btn.onclick = () => assignPlayer(slot.slotKey, player.id);
-          btnRow.appendChild(btn);
-        });
-        card.appendChild(btnRow);
-
-        // スマホ用：タップすると「どの枠に入れるか」を選ぶポップアップを開くボタン
-        const mobileBtn = document.createElement('button');
-        mobileBtn.className = 'mobile-assign-btn';
-        mobileBtn.textContent = '枠を選んで配置する';
-        mobileBtn.onclick = () => openMobileAssignModal(player.id, player.name);
-        card.appendChild(mobileBtn);
-      }
 
       container.appendChild(card);
     });
@@ -1210,23 +1211,26 @@
 
   // ===== スマホ用：枠選択ポップアップ（ボトムシート） =====
 
-  // 「枠を選んで配置する」ボタンが押されたとき：その選手を、どの枠に入れるか選ぶ一覧を開く
-  function openMobileAssignModal(playerId, playerName) {
-    document.getElementById('mobileModalPlayerName').textContent = `${playerName} を配置する枠を選んでください`;
+  // 「枠」がクリック・タップされたとき：その枠に入れる選手を選ぶポップアップを開く（PC・スマホ共通）
+  function openSlotPlayerModal(slotKey, slotLabel) {
+    document.getElementById('mobileModalPlayerName').textContent = `「${slotLabel}」に入れる選手を選んでください`;
 
     const optionsBox = document.getElementById('mobileModalOptions');
     optionsBox.innerHTML = '';
 
-    formationSlots.forEach(slot => {
-      const filledPlayerId = assignments[slot.slotKey];
-      const filledPlayer = players.find(p => p.id === filledPlayerId);
+    const usedPlayerIds = Object.values(assignments);
+    const currentPlayerId = assignments[slotKey]; // 今この枠に入っている選手（いれば）
+
+    players.forEach(player => {
+      const isUsedElsewhere = usedPlayerIds.includes(player.id) && player.id !== currentPlayerId;
+      if (isUsedElsewhere) return; // すでに他の枠に入っている選手は、候補に出さない
 
       const btn = document.createElement('button');
       btn.className = 'mobile-modal-option';
-      // すでに別の選手が入っている枠は、それが分かるように表示する（上書きされることを伝える）
-      btn.textContent = filledPlayer ? `${slot.label}（現在：${filledPlayer.name}　→ 入れ替え）` : `${slot.label}（空き）`;
+      const isCurrent = player.id === currentPlayerId;
+      btn.textContent = `${player.name}（${player.club}）${isCurrent ? '　← 現在配置中' : ''}`;
       btn.onclick = () => {
-        assignPlayer(slot.slotKey, playerId);
+        assignPlayer(slotKey, player.id);
         closeMobileAssignModal();
       };
       optionsBox.appendChild(btn);
@@ -1297,6 +1301,7 @@
 
   // コーチメニューを開いたとき：全申請を「申請中／差戻／承認済み」の3区分に分けて一覧表示する
   function loadCoachHub() {
+    detailViewedFrom = 'coach'; // この一覧から開いた詳細は、コーチメニューに戻るようにする
     const submittedBox = document.getElementById('coachSubmittedListArea');
     const rejectedBox = document.getElementById('coachRejectedListArea');
     const approvedBox = document.getElementById('coachApprovedListArea');
@@ -1311,7 +1316,11 @@
       const all = snapshot.val() || {};
       const items = [];
 
-      const reads = Object.keys(all).map((no) => {
+      // コーチメニューは「自分が申請したもの」だけに絞る。
+      // 全員分を見たい場合は別メニュー「スタメン申請リスト」を使う、という役割分担にしている。
+      const myNos = Object.keys(all).filter((no) => all[no].createdBy === currentUserName);
+
+      const reads = myNos.map((no) => {
         const sel = all[no];
         if (!sel.currentStatus) return Promise.resolve();
         const status = sel.currentStatus.status;
@@ -1353,10 +1362,22 @@
   }
 
   // コーチ視点で、申請の詳細を見る（差し戻し中なら「再申請する」ボタンを出す）
+  // selectionNo: 表示する申請No
+  // 戻り先は、グローバル変数 detailViewedFrom（'coach' または 'archive'）を見て自動的に判定する
   function viewCoachDetail(selectionNo) {
     showScreen('screen-coach-detail');
     const box = document.getElementById('coachDetailArea');
     box.innerHTML = '<p style="font-size:13px; color:#a9b8d4;">読み込み中…</p>';
+
+    // 戻るリンクの動作を、呼び出し元に応じて切り替える
+    const backLink = document.getElementById('coachDetailBackLink');
+    if (detailViewedFrom === 'archive') {
+      backLink.textContent = '← 申請履歴一覧にもどる';
+      backLink.onclick = () => openArchiveList();
+    } else {
+      backLink.textContent = '← コーチメニューにもどる';
+      backLink.onclick = () => { showScreen('screen-coach-hub'); loadCoachHub(); };
+    }
 
     db.ref(selectionPath(selectionNo)).once('value').then((snapshot) => {
       const sel = snapshot.val();
@@ -1450,13 +1471,14 @@
   // タイトルを入力して「選手選びへ進む」を押したとき：申請Noの箱を作り、選手選び画面へ進む
   function confirmNewSelectionTitle() {
     const titleInput = document.getElementById('newSelectionTitleInput');
-    let title = titleInput.value.trim();
-    if (!title) {
-      alert('タイトルを入力してください。');
+    let countryName = titleInput.value.trim();
+    if (!countryName) {
+      alert('対戦相手国を入力してください。');
       return;
     }
     // 文字数上限の二重チェック（maxlength属性が回避された場合の安全策）
-    if (title.length > 30) title = title.slice(0, 30);
+    if (countryName.length > 27) countryName = countryName.slice(0, 27); // 「vs」分の余白を残しておく
+    const title = 'vs' + countryName; // コーチが入力した国名の先頭に「vs」を自動で付け足す
     const selectionNo = titleInput.dataset.selectionNo;
 
     // 申請Noの箱を作成し、同時にnextSelectionNoを1つ進める
@@ -1494,6 +1516,156 @@
       managerDecided: '監督決定・確定'
     };
     return map[status] || status;
+  }
+
+  // 比較分析画面用：5種類のステータスを「申請中／承認待／承認済」の3パターンに簡略化する
+  // （現状の運用では「申請中・再申請中・差し戻し中」はすべて「申請中」として扱う）
+  function statusToSimpleLabel(status) {
+    if (status === 'approved' || status === 'managerDecided') return '承認済';
+    if (status === 'pendingApproval') return '承認待'; // 将来的な拡張用（現状は使用しない）
+    return '申請中'; // submitted, resubmitted, rejected はすべてここに該当
+  }
+
+  // ===== 申請履歴一覧・比較分析（役割を問わない閲覧機能） =====
+
+  let compareSelectedNos = []; // 比較のためにチェックを入れた申請No（最大3件）
+  let detailViewedFrom = 'coach'; // viewCoachDetailを開く直前にどこから来たか（'coach' or 'archive'）
+
+  // 「申請履歴一覧」を開いたとき：全員分の申請を、ステータス問わず全部読み込んで一覧表示する
+  function openArchiveList() {
+    document.getElementById('mainCard').classList.add('medium');
+    document.getElementById('mainCard').classList.remove('wide');
+    showScreen('screen-archive-list');
+    detailViewedFrom = 'archive'; // この一覧から開いた詳細は、申請履歴一覧に戻るようにする
+    compareSelectedNos = [];
+    const box = document.getElementById('archiveListArea');
+    box.innerHTML = '<p style="font-size:13px; color:#a9b8d4;">読み込み中…</p>';
+
+    if (!db) return;
+
+    db.ref(APP_ROOT + '/selections').once('value').then((snapshot) => {
+      const all = snapshot.val() || {};
+      const items = [];
+
+      const reads = Object.keys(all).map((no) => {
+        const sel = all[no];
+        if (!sel.currentStatus) return Promise.resolve();
+        return db.ref(selectionPath(no) + '/history/' + sel.currentStatus.latestHistoryKey).once('value').then((histSnap) => {
+          const record = histSnap.val();
+          items.push({
+            no,
+            title: sel.title,
+            status: sel.currentStatus.status,
+            applicantName: (record && record.submittedBy) ? record.submittedBy : (sel.createdBy || '不明')
+          });
+        });
+      });
+
+      Promise.all(reads).then(() => {
+        items.sort((a, b) => Number(a.no) - Number(b.no));
+
+        if (items.length === 0) {
+          box.innerHTML = '<p style="font-size:13px; color:#7b93a8;">まだ申請の記録がありません。</p>';
+          return;
+        }
+
+        let html = '<div class="manager-list">';
+        items.forEach(item => {
+          html += `
+            <div class="list-entry-row" style="align-items:center;">
+              <input type="checkbox" value="${item.no}" onchange="toggleCompareSelection(this)" onclick="event.stopPropagation()" style="margin-right:10px; width:18px; height:18px; cursor:pointer;">
+              <span style="flex:1; cursor:pointer; display:flex; justify-content:space-between;" onclick="viewCoachDetail('${item.no}')">
+                <span class="entry-no">No${item.no}（${item.applicantName}）</span>
+                <span class="entry-title">${item.title}（${statusToLabel(item.status)}）</span>
+              </span>
+            </div>`;
+        });
+        html += '</div>';
+        box.innerHTML = html;
+      });
+    });
+  }
+
+  // チェックボックスが変化したとき：選択中の申請Noリストを更新し、比較ボタンの有効・無効を切り替える
+  function toggleCompareSelection(checkbox) {
+    const no = checkbox.value;
+    if (checkbox.checked) {
+      if (compareSelectedNos.length >= 3) {
+        // 3件を超えて選ぼうとした場合は、選択を取り消す（比較は2〜3件までに限定する）
+        checkbox.checked = false;
+        alert('比較できるのは最大3件までです。');
+        return;
+      }
+      compareSelectedNos.push(no);
+    } else {
+      compareSelectedNos = compareSelectedNos.filter(n => n !== no);
+    }
+
+    const compareBtn = document.getElementById('compareBtn');
+    compareBtn.disabled = compareSelectedNos.length < 2;
+  }
+
+  // 「比較分析する」ボタンが押されたとき：選んだ申請No同士を、枠ごとに横並びの表で比較する
+  function openCompareScreen() {
+    document.getElementById('mainCard').classList.add('wide');
+    document.getElementById('mainCard').classList.remove('medium');
+    showScreen('screen-compare');
+    const box = document.getElementById('compareArea');
+    box.innerHTML = '<p style="font-size:13px; color:#a9b8d4;">読み込み中…</p>';
+
+    const reads = compareSelectedNos.map(no => {
+      return db.ref(selectionPath(no)).once('value').then(snapshot => {
+        const sel = snapshot.val();
+        return db.ref(selectionPath(no) + '/history/' + sel.currentStatus.latestHistoryKey).once('value').then(histSnap => {
+          const record = histSnap.val();
+          return {
+            no,
+            title: sel.title,
+            status: sel.currentStatus.status,
+            applicantName: (record && record.submittedBy) ? record.submittedBy : (sel.createdBy || '不明'),
+            record
+          };
+        });
+      });
+    });
+
+    Promise.all(reads).then(results => {
+      // 固定ヘッダー・固定列を実現するため、1列目（ポジション列）とそれ以外で
+      // sticky位置を分けて指定する。th/tdそれぞれにstickyの指定をしている。
+      // min-widthを指定し、列が狭くなりすぎて文字が不自然に折り返されるのを防ぐ。
+      const headerCellStyle = 'position:sticky; top:0; background:var(--ink-panel); z-index:2; padding:10px 12px; text-align:left; border-bottom:1px solid var(--line); min-width:130px;';
+      const firstColStyle = 'position:sticky; left:0; background:var(--ink-panel); z-index:1; padding:8px 12px; text-align:left; border-bottom:1px solid rgba(201,168,92,0.12); color:#a9b8d4; white-space:nowrap; min-width:90px;';
+      const cellStyle = 'padding:8px 12px; border-bottom:1px solid rgba(201,168,92,0.12); color:#fff; white-space:nowrap; min-width:130px;';
+
+      let html = '<table style="border-collapse:collapse; font-size:13px; min-width:100%;">';
+
+      // 見出し行：申請者・申請No・タイトル・承認ステータスを、それぞれ独立した行として改行して表示する
+      // （No+タイトルを同じ行にまとめると、スマホで折り返されて読みにくくなるため、行を分けている）
+      html += `<tr><th style="${headerCellStyle} z-index:3;">ポジション</th>`;
+      results.forEach(r => {
+        html += `<th style="${headerCellStyle}">
+            <div style="color:#a9b8d4; font-size:11px; white-space:nowrap;">${r.applicantName}</div>
+            <div style="color:var(--gold-bright); font-weight:bold; white-space:nowrap;">No${r.no}</div>
+            <div style="color:var(--gold-bright); white-space:nowrap;">${r.title}</div>
+            <div style="font-size:11px; color:#a9b8d4; white-space:nowrap;">${statusToSimpleLabel(r.status)}</div>
+          </th>`;
+      });
+      html += '</tr>';
+
+      // 各枠ごとに1行：選ばれた選手名を横並びで比較する
+      formationSlots.forEach(slot => {
+        html += `<tr><td style="${firstColStyle}">${slot.label}</td>`;
+        results.forEach(r => {
+          const playerId = r.record.assignments[slot.slotKey];
+          const player = players.find(p => p.id === playerId);
+          html += `<td style="${cellStyle}">${player ? player.name : '－'}</td>`;
+        });
+        html += '</tr>';
+      });
+
+      html += '</table>';
+      box.innerHTML = html;
+    });
   }
 
   // ===== 履歴タイムライン（証跡の見える化） =====
@@ -1640,9 +1812,7 @@
 
   function loadManagerHub() {
     const pendingBox = document.getElementById('managerPendingListArea');
-    const doneBox = document.getElementById('managerDoneListArea');
     pendingBox.innerHTML = '<p style="font-size:13px; color:#a9b8d4;">読み込み中…</p>';
-    doneBox.innerHTML = '';
 
     if (!db) return;
 
@@ -1655,6 +1825,7 @@
         const sel = all[no];
         if (!sel.currentStatus) return Promise.resolve();
         const status = sel.currentStatus.status;
+        if (status !== 'submitted' && status !== 'resubmitted') return Promise.resolve(); // 未承認のものだけ対象にする
 
         return db.ref(selectionPath(no) + '/history/' + sel.currentStatus.latestHistoryKey).once('value').then((histSnap) => {
           const record = histSnap.val();
@@ -1668,14 +1839,8 @@
       });
 
       Promise.all(reads).then(() => {
-        const pending = items.filter(i => i.status === 'submitted' || i.status === 'resubmitted');
-        const done = items.filter(i => i.status === 'approved' || i.status === 'managerDecided');
-
-        pending.sort((a, b) => Number(a.no) - Number(b.no));
-        done.sort((a, b) => Number(b.no) - Number(a.no));
-
-        pendingBox.innerHTML = renderEntryList(pending, '未承認の申請はありません。', 'openManagerSelection');
-        doneBox.innerHTML = renderEntryList(done, '承認済みの申請はまだありません。', 'openManagerSelection');
+        items.sort((a, b) => Number(a.no) - Number(b.no));
+        pendingBox.innerHTML = renderEntryList(items, '未承認の申請はありません。', 'openManagerSelection');
       });
     });
   }
