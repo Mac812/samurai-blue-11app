@@ -146,11 +146,9 @@
     border: 1px solid rgba(201,168,92,0.3);
   }
   #connectionStatus {
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    padding: 8px;
-    border-radius: 4px;
-    margin-bottom: 24px;
+    /* 友人向けの画面には表示しない。裏側では引き続き接続確認の処理が動いており、
+       不具合時はブラウザの開発者ツールでこの要素の中身を確認できる。 */
+    display: none;
   }
   .screen {
     display: none;
@@ -1284,6 +1282,15 @@
       alert('Firebaseに接続できていません。');
       return;
     }
+
+    // 誤操作（友人が間違って押してしまうこと）を防ぐため、開発者だけが知る合言葉を求める
+    const password = prompt('この操作は開発者専用です。合言葉を入力してください。');
+    if (password === null) return; // キャンセルされた場合は何もしない
+    if (password !== 'ブラボー') {
+      alert('合言葉が違います。リセットは行われませんでした。');
+      return;
+    }
+
     const ok1 = confirm('⚠️ 申請データ・履歴をすべて削除します。この操作は取り消せません。本当によろしいですか？');
     if (!ok1) return;
 
