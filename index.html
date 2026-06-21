@@ -1613,6 +1613,17 @@
   }
 
   // 「比較分析する」ボタンが押されたとき：選んだ申請No同士を、枠ごとに横並びの表で比較する
+  // 比較分析画面専用：枠キーを簡略ラベルに変換する表（選手選び画面のラベルとは別物）
+  // ①②③などの番号を省略し、同じポジション種別はまとめて表示する（例：DF①②③→すべて「DF」）
+  const compareLabelMap = {
+    gk1: 'GK',
+    df1: 'DF', df2: 'DF', df3: 'DF',
+    dmf1: 'DH', dmf2: 'DH',
+    rwb: '右WB', lwb: '左WB',
+    ofs1: 'OH', ofs2: 'OH',
+    fw: 'FW'
+  };
+
   function openCompareScreen() {
     document.getElementById('mainCard').classList.add('wide');
     document.getElementById('mainCard').classList.remove('medium');
@@ -1639,29 +1650,30 @@
     Promise.all(reads).then(results => {
       // 固定ヘッダー・固定列を実現するため、1列目（ポジション列）とそれ以外で
       // sticky位置を分けて指定する。th/tdそれぞれにstickyの指定をしている。
-      // min-widthを指定し、列が狭くなりすぎて文字が不自然に折り返されるのを防ぐ。
-      const headerCellStyle = 'position:sticky; top:0; background:var(--ink-panel); z-index:2; padding:10px 12px; text-align:left; border-bottom:1px solid var(--line); min-width:130px;';
-      const firstColStyle = 'position:sticky; left:0; background:var(--ink-panel); z-index:1; padding:8px 12px; text-align:left; border-bottom:1px solid rgba(201,168,92,0.12); color:#a9b8d4; white-space:nowrap; min-width:90px;';
-      const cellStyle = 'padding:8px 12px; border-bottom:1px solid rgba(201,168,92,0.12); color:#fff; white-space:nowrap; min-width:130px;';
+      // スマホで「ポジション列＋2人分」が画面内に収まるよう、文字サイズ・幅をコンパクトにしている。
+      const headerCellStyle = 'position:sticky; top:0; background:var(--ink-panel); z-index:2; padding:6px 8px; text-align:left; border-bottom:1px solid var(--line); min-width:88px;';
+      const firstColStyle = 'position:sticky; left:0; background:var(--ink-panel); z-index:1; padding:6px 8px; text-align:left; border-bottom:1px solid rgba(201,168,92,0.12); color:#a9b8d4; white-space:nowrap; min-width:48px;';
+      const cellStyle = 'padding:6px 8px; border-bottom:1px solid rgba(201,168,92,0.12); color:#fff; white-space:nowrap; min-width:88px;';
 
-      let html = '<table style="border-collapse:collapse; font-size:13px; min-width:100%;">';
+      let html = '<table style="border-collapse:collapse; font-size:12px; min-width:100%;">';
 
       // 見出し行：申請者・申請No・タイトル・承認ステータスを、それぞれ独立した行として改行して表示する
       // （No+タイトルを同じ行にまとめると、スマホで折り返されて読みにくくなるため、行を分けている）
       html += `<tr><th style="${headerCellStyle} z-index:3;">ポジション</th>`;
       results.forEach(r => {
         html += `<th style="${headerCellStyle}">
-            <div style="color:#a9b8d4; font-size:11px; white-space:nowrap;">${r.applicantName}</div>
-            <div style="color:var(--gold-bright); font-weight:bold; white-space:nowrap;">No${r.no}</div>
-            <div style="color:var(--gold-bright); white-space:nowrap;">${r.title}</div>
-            <div style="font-size:11px; color:#a9b8d4; white-space:nowrap;">${statusToSimpleLabel(r.status)}</div>
+            <div style="color:#a9b8d4; font-size:10px; white-space:nowrap;">${r.applicantName}</div>
+            <div style="color:var(--gold-bright); font-weight:bold; white-space:nowrap; font-size:11px;">No${r.no}</div>
+            <div style="color:var(--gold-bright); white-space:nowrap; font-size:11px;">${r.title}</div>
+            <div style="font-size:10px; color:#a9b8d4; white-space:nowrap;">${statusToSimpleLabel(r.status)}</div>
           </th>`;
       });
       html += '</tr>';
 
-      // 各枠ごとに1行：選ばれた選手名を横並びで比較する
+      // 各枠ごとに1行：選ばれた選手名を横並びで比較する（ラベルは簡略表示）
       formationSlots.forEach(slot => {
-        html += `<tr><td style="${firstColStyle}">${slot.label}</td>`;
+        const compactLabel = compareLabelMap[slot.slotKey] || slot.label;
+        html += `<tr><td style="${firstColStyle}">${compactLabel}</td>`;
         results.forEach(r => {
           const playerId = r.record.assignments[slot.slotKey];
           const player = players.find(p => p.id === playerId);
